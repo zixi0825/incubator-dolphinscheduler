@@ -99,7 +99,6 @@
 			<outputDirectory>conf</outputDirectory>
 		</fileSet>
 
-
 		<fileSet>
 			<directory>${basedir}/../dolphinscheduler-dao/src/main/resources</directory>
 			<includes>
@@ -112,8 +111,7 @@
 		</fileSet>
 		<!--server end-->
 
-		
-                <!--service start-->
+        <!--service start-->
 		<fileSet>
 			<directory>${basedir}/../dolphinscheduler-service/src/main/resources</directory>
 			<includes>
@@ -145,6 +143,14 @@
 
 		<fileSet>
 			<directory>${basedir}/../dolphinscheduler-alert/target/dolphinscheduler-alert-${project.version}</directory>
+			<includes>
+				<include>**/*.*</include>
+			</includes>
+			<outputDirectory>.</outputDirectory>
+		</fileSet>
+
+		<fileSet>
+			<directory>${basedir}/../dolphinscheduler-dqs/target/dolphinscheduler-dqs-${project.version}</directory>
 			<includes>
 				<include>**/*.*</include>
 			</includes>

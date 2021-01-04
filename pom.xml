@@ -198,6 +198,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.dolphinscheduler</groupId>
+                <artifactId>dolphinscheduler-dqs</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.dolphinscheduler</groupId>
                 <artifactId>dolphinscheduler-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -347,7 +352,7 @@
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.connector.version}</version>
-                <scope>test</scope>
+                <!--<scope>test</scope>-->
             </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
@@ -1062,5 +1067,6 @@
         <module>dolphinscheduler-service</module>
         <module>dolphinscheduler-plugin-api</module>
         <module>dolphinscheduler-microbench</module>
+        <module>dolphinscheduler-dqs</module>
     </modules>
 </project>
