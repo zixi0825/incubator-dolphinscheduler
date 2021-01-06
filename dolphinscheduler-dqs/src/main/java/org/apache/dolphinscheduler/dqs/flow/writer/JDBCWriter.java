@@ -53,12 +53,12 @@ public class JDBCWriter implements IWriter {
         String driver = String.valueOf(config.getOrDefault(DRIVER,DEFAULT_DRIVER));
         String sql = String.valueOf(config.getOrDefault(SQL,EMPTY));
 
-
         Preconditions.checkArgument(JDBCUtil.isJDBCDriverLoaded(driver), "JDBC driver $driver not present in classpath");
 
         sparkSession.sql(sql)
                 .write()
                 .format("jdbc")
+                .option("driver",driver)
                 .option("url",url)
                 .option("dbtable", fullTableName)
                 .option("user", user)

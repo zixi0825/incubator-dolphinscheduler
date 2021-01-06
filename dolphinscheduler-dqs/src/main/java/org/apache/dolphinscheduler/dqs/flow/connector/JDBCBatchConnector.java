@@ -56,6 +56,7 @@ public class JDBCBatchConnector implements IConnector {
         sparkSession
                 .read()
                 .format("jdbc")
+                .option("driver",driver)
                 .option("url",url)
                 .option("dbtable", fullTableName)
                 .option("user", user)

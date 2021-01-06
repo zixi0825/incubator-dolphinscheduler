@@ -19,6 +19,11 @@ package org.apache.dolphinscheduler.dqs.flow.connector;
 import org.apache.dolphinscheduler.dqs.configuration.ConnectorParameter;
 import org.apache.spark.sql.SparkSession;
 
+import java.util.Map;
+
+import static org.apache.dolphinscheduler.dqs.Constants.*;
+import static org.apache.dolphinscheduler.dqs.Constants.DEFAULT_DRIVER;
+
 /**
  * HiveBatchConnector
  */
@@ -35,6 +40,11 @@ public class HiveBatchConnector implements IConnector {
 
     @Override
     public void execute() {
-        //不做任何处理
+        Map<String,Object> config = connectorParameter.getConfig();
+        String database = String.valueOf(config.getOrDefault(DATABASE,DEFAULT_DATABASE));
+        String table = String.valueOf(config.getOrDefault(TABLE,EMPTY));
+        String fullTableName = database+"."+table;
+
+        sparkSession.table(fullTableName).createOrReplaceTempView(table);
     }
 }

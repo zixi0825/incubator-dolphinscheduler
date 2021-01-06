@@ -17,7 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <scala.version>2.11.8</scala.version>
         <scala.binary.version>2.11</scala.binary.version>
-        <spark.version>2.2.1</spark.version>
+        <spark.version>2.4.0</spark.version>
         <avro.version>1.7.7</avro.version>
         <jackson.version>2.8.7</jackson.version>
         <scalaj.version>2.3.0</scalaj.version>
@@ -32,7 +32,8 @@
         <scalastyle.version>1.0.0</scalastyle.version>
         <scalafmt.parameters>--diff --test</scalafmt.parameters>
         <scalafmt.skip>false</scalafmt.skip>
-        <spark.scope>compile</spark.scope>
+        <spark.scope>provided</spark.scope>
+        <other.scope>provided</other.scope>
     </properties>
 
     <dependencies>
@@ -41,6 +42,7 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
+            <scope>${spark.scope}</scope>
         </dependency>
 
         <!--spark, spark streaming, spark hive-->
@@ -55,14 +57,14 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>4.0.43.Final</version>
-            <scope>compile</scope>
+            <scope>${spark.scope}</scope>
         </dependency>
 
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty</artifactId>
             <version>3.9.9.Final</version>
-            <scope>compile</scope>
+            <scope>${spark.scope}</scope>
         </dependency>
 
         <dependency>
@@ -77,6 +79,7 @@
             <artifactId>spark-sql_${scala.binary.version}</artifactId>
             <version>${spark.version}</version>
             <scope>${spark.scope}</scope>
+
         </dependency>
 
         <dependency>
@@ -100,6 +103,7 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-streaming-kafka-0-8_${scala.binary.version}</artifactId>
             <version>${spark.version}</version>
+            <scope>${spark.scope}</scope>
         </dependency>
 
         <!--jackson-->
@@ -107,33 +111,14 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
+            <scope>${spark.scope}</scope>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-scala_${scala.binary.version}</artifactId>
             <version>${jackson.version}</version>
-        </dependency>
-
-        <!--scalaj for http request-->
-        <dependency>
-            <groupId>org.scalaj</groupId>
-            <artifactId>scalaj-http_${scala.binary.version}</artifactId>
-            <version>${scalaj.version}</version>
-        </dependency>
-
-        <!--mongo request-->
-        <dependency>
-            <groupId>org.mongodb.scala</groupId>
-            <artifactId>mongo-scala-driver_2.11</artifactId>
-            <version>${mongo.version}</version>
-        </dependency>
-
-        <!--avro-->
-        <dependency>
-            <groupId>com.databricks</groupId>
-            <artifactId>spark-avro_${scala.binary.version}</artifactId>
-            <version>4.0.0</version>
+            <scope>${spark.scope}</scope>
         </dependency>
 
         <!--log4j-->
@@ -141,18 +126,21 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
+            <scope>${spark.scope}</scope>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
+            <scope>${spark.scope}</scope>
         </dependency>
 
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
+            <scope>${spark.scope}</scope>
         </dependency>
 
         <!--curator-->
@@ -160,12 +148,14 @@
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-recipes</artifactId>
             <version>${curator.version}</version>
+            <scope>${spark.scope}</scope>
         </dependency>
 
         <!--junit-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!--scala test-->
@@ -197,4 +187,49 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.apache.dolphinscheduler.dqs.DataQualityApplication</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assembly</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

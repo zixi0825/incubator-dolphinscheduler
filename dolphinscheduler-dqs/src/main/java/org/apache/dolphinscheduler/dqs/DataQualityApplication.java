@@ -16,6 +16,7 @@
  */
 package org.apache.dolphinscheduler.dqs;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.dolphinscheduler.dqs.configuration.DataQualityConfiguration;
 import org.apache.dolphinscheduler.dqs.context.DataQualityContext;
 import org.apache.dolphinscheduler.dqs.flow.DataQualityTask;
@@ -28,6 +29,7 @@ import org.apache.spark.sql.SparkSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,14 +42,14 @@ public class DataQualityApplication {
     private static final Logger logger = LoggerFactory.getLogger(DataQualityApplication.class);
 
     public static void main(String[] args) throws Exception {
-        logger.info(JSONUtil.toJson(args));
 
         if (args.length < 1) {
-            logger.error("Usage: class <env-param> <dq-param>");
+            logger.error("Usage: class <DataQualityConfiguration>");
             System.exit(-1);
         }
 
         String dataQualityParameter = args[0];
+//        String dataQualityParameter = FileUtils.readFileToString(new File(args[0]));
         logger.info("dataQualityParameter: "+dataQualityParameter);
 
         DataQualityConfiguration dataQualityConfiguration = JSONUtil.fromJson(dataQualityParameter,DataQualityConfiguration.class);
@@ -61,8 +63,8 @@ public class DataQualityApplication {
         }
 
         conf.set("spark.sql.crossJoin.enabled", "true");
-//        SparkSession sparkSession = SparkSession.builder().config(conf).enableHiveSupport().getOrCreate();
-        SparkSession sparkSession = SparkSession.builder().config(conf).getOrCreate();
+        SparkSession sparkSession = SparkSession.builder().config(conf).enableHiveSupport().getOrCreate();
+//        SparkSession sparkSession = SparkSession.builder().config(conf).getOrCreate();
 
         DataQualityContext context = new DataQualityContext(
                 sparkSession,

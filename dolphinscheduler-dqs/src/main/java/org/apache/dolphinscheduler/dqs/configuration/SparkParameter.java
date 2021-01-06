@@ -28,31 +28,15 @@ public class SparkParameter implements IParameter {
     @JsonProperty("log.level")
     private String logLevel;
 
-    @JsonProperty("checkpoint.dir")
-    private String checkpointDir;
-
-    @JsonProperty("batch.interval")
-    private String batchInterval;
-
-    @JsonProperty("process.interval")
-    private String processInterval;
-
     @JsonProperty("config")
     private Map<String, String> config;
-
-    @JsonProperty("init.clear")
-    private Boolean initClear;
 
     public SparkParameter() {
     }
 
-    public SparkParameter(String logLevel, String checkpointDir, String batchInterval, String processInterval, Map<String, String> config, Boolean initClear) {
+    public SparkParameter(String logLevel,Map<String, String> config) {
         this.logLevel = logLevel;
-        this.checkpointDir = checkpointDir;
-        this.batchInterval = batchInterval;
-        this.processInterval = processInterval;
         this.config = config;
-        this.initClear = initClear;
     }
 
     public String getLogLevel() {
@@ -63,44 +47,12 @@ public class SparkParameter implements IParameter {
         this.logLevel = logLevel;
     }
 
-    public String getCheckpointDir() {
-        return checkpointDir;
-    }
-
-    public void setCheckpointDir(String checkpointDir) {
-        this.checkpointDir = checkpointDir;
-    }
-
-    public String getBatchInterval() {
-        return batchInterval;
-    }
-
-    public void setBatchInterval(String batchInterval) {
-        this.batchInterval = batchInterval;
-    }
-
-    public String getProcessInterval() {
-        return processInterval;
-    }
-
-    public void setProcessInterval(String processInterval) {
-        this.processInterval = processInterval;
-    }
-
     public Map<String, String> getConfig() {
         return config;
     }
 
     public void setConfig(Map<String, String> config) {
         this.config = config;
-    }
-
-    public Boolean getInitClear() {
-        return initClear;
-    }
-
-    public void setInitClear(Boolean initClear) {
-        this.initClear = initClear;
     }
 
     @Override
