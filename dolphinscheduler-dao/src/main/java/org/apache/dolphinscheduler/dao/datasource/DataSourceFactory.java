@@ -105,4 +105,44 @@ public class DataSourceFactory {
 
     }
   }
+
+  /**
+   * load class
+   * @param dbType
+   * @throws Exception
+   */
+  public static String getDriver(DbType dbType) throws Exception{
+    switch (dbType){
+      case MYSQL :
+        return Constants.COM_MYSQL_JDBC_DRIVER;
+
+      case POSTGRESQL :
+        return Constants.ORG_POSTGRESQL_DRIVER;
+
+      case HIVE :
+        return Constants.ORG_APACHE_HIVE_JDBC_HIVE_DRIVER;
+
+      case SPARK :
+        return Constants.ORG_APACHE_HIVE_JDBC_HIVE_DRIVER;
+
+      case CLICKHOUSE :
+        return Constants.COM_CLICKHOUSE_JDBC_DRIVER;
+
+      case ORACLE :
+        return Constants.COM_ORACLE_JDBC_DRIVER;
+
+      case SQLSERVER:
+        return Constants.COM_SQLSERVER_JDBC_DRIVER;
+
+      case DB2:
+        return Constants.COM_DB2_JDBC_DRIVER;
+
+      case PRESTO:
+        return Constants.COM_PRESTO_JDBC_DRIVER;
+
+      default:
+        logger.error("not support sql type: {},can't load class", dbType);
+        throw new IllegalArgumentException("not support sql type,can't load class");
+    }
+  }
 }

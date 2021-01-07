@@ -37,6 +37,7 @@ public enum TaskType {
      * 11 CONDITIONS
      * 12 SQOOP
      * 13 WATERDROP
+     * 14 DATA_QUALITY
      */
     SHELL(0, "shell"),
     SQL(1, "sql"),
@@ -51,7 +52,8 @@ public enum TaskType {
     DATAX(10, "datax"),
     CONDITIONS(11, "conditions"),
     SQOOP(12, "sqoop"),
-    WATERDROP(13, "waterdrop");
+    WATERDROP(13, "waterdrop"),
+    DATA_QUALITY(13, "data_quality");
 
     TaskType(int code, String descp){
         this.code = code;

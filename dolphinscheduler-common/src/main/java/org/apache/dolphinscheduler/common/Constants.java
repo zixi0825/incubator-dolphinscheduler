@@ -945,7 +945,39 @@ public final class Constants {
     public static final String PRINCIPAL = "principal";
     public static final String OTHER = "other";
     public static final String ORACLE_DB_CONNECT_TYPE = "connectType";
+    public static final String TABLE = "table";
+    public static final String URL = "url";
+    public static final String DRIVER = "driver";
+    public static final String SQL = "sql";
 
+    /**
+     * data quality task
+     */
+    public static final String SRC_CONNECTOR_TYPE = "database";
+    public static final String SRC_DATASOURCE_ID = "";
+    public static final String SRC_TABLE = "database";
+    public static final String SRC_FILTER = "jdbcUrl";
+    public static final String SRC_FILED = "principal";
+    public static final String TARGET_CONNECTOR_TYPE = "other";
+    public static final String TARGET_DATASOURCE_ID = "connectType";
+    public static final String TARGET_TABLE = "table";
+    public static final String TARGET_FILTER = "url";
+    public static final String TARGET_FILED = "driver";
+    public static final String STATISTICS_NAME = "sql";
+    public static final String STATISTICS_EXECUTE_SQL = "database";
+    public static final String COMPARISON_NAME = "jdbcUrl";
+    public static final String COMPARISON_TITLE = "principal";
+    public static final String COMPARISON_VALUE = "other";
+    public static final String COMPARISON_EXECUTE_SQL = "connectType";
+    public static final String MAPPING_COLUMNS = "table";
+    public static final String ON_CLAUSE = "url";
+    public static final String WHERE_CLAUSE = "driver";
+    public static final String CHECK_TYPE = "sql";
+    public static final String THRESHOLD = "url";
+    public static final String OPERATOR = "driver";
+    public static final String STATISTICS_TABLE = "sql";
+    public static final String COMPARISON_TABLE = "sql";
+    public static final String AND = " AND ";
 
     /**
      * session timeout

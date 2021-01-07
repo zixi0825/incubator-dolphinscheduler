@@ -129,6 +129,16 @@ public class TaskExecutionContextBuilder {
         return this;
     }
 
+    /**
+     * build DataQualityTask related info
+     *
+     * @param dataQualityTaskExecutionContext dataQualityTaskExecutionContext
+     * @return TaskExecutionContextBuilder
+     */
+    public TaskExecutionContextBuilder buildDataQualityTaskRelatedInfo(DataQualityTaskExecutionContext dataQualityTaskExecutionContext){
+        taskExecutionContext.setDataQualityTaskExecutionContext(dataQualityTaskExecutionContext);
+        return this;
+    }
 
     /**
      * create

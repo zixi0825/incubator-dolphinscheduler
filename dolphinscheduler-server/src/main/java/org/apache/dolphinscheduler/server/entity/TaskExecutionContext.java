@@ -216,6 +216,11 @@ public class TaskExecutionContext implements Serializable {
      */
     private ProcedureTaskExecutionContext procedureTaskExecutionContext;
 
+    /**
+     * procedure TaskExecutionContext
+     */
+    private DataQualityTaskExecutionContext dataQualityTaskExecutionContext;
+
     public int getTaskInstanceId() {
         return taskInstanceId;
     }
@@ -484,6 +489,14 @@ public class TaskExecutionContext implements Serializable {
 
     public void setDependenceTaskExecutionContext(DependenceTaskExecutionContext dependenceTaskExecutionContext) {
         this.dependenceTaskExecutionContext = dependenceTaskExecutionContext;
+    }
+
+    public DataQualityTaskExecutionContext getDataQualityTaskExecutionContext() {
+        return dataQualityTaskExecutionContext;
+    }
+
+    public void setDataQualityTaskExecutionContext(DataQualityTaskExecutionContext dataQualityTaskExecutionContext) {
+        this.dataQualityTaskExecutionContext = dataQualityTaskExecutionContext;
     }
 
     public Map<String, String> getResources() {

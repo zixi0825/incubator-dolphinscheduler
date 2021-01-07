@@ -1,0 +1,94 @@
+package org.apache.dolphinscheduler.server.worker.task.dqs.rule;
+
+import org.apache.dolphinscheduler.common.enums.ComparisonValueType;
+import org.apache.dolphinscheduler.common.enums.RuleType;
+
+import java.util.List;
+
+public class RuleDefinition{
+
+    /**
+     * ruleName
+     */
+    private String ruleName;
+    /**
+     * ruleType
+     */
+    private RuleType ruleType;
+    /**
+     * input entry list
+     */
+    private List<RuleInputEntry> ruleInputEntryList;
+    /**
+     * mid execute sql list
+     */
+    private List<ExecuteSqlDefinition> midExecuteSqlList;
+    /**
+     * statistics execute sql list
+     */
+    private List<ExecuteSqlDefinition> statisticsExecuteSqlList;
+    /**
+     * comparison value type
+     */
+    private ComparisonValueType comparisonValueType;
+    /**
+     * comparison rule parameter
+     */
+    private String comparisonParameter;
+
+    public String getRuleName() {
+        return ruleName;
+    }
+
+    public void setRuleName(String ruleName) {
+        this.ruleName = ruleName;
+    }
+
+    public RuleType getRuleType() {
+        return ruleType;
+    }
+
+    public void setRuleType(RuleType ruleType) {
+        this.ruleType = ruleType;
+    }
+
+    public List<RuleInputEntry> getRuleInputEntryList() {
+        return ruleInputEntryList;
+    }
+
+    public void setRuleInputEntryList(List<RuleInputEntry> ruleInputEntryList) {
+        this.ruleInputEntryList = ruleInputEntryList;
+    }
+
+    public List<ExecuteSqlDefinition> getMidExecuteSqlList() {
+        return midExecuteSqlList;
+    }
+
+    public void setMidExecuteSqlList(List<ExecuteSqlDefinition> midExecuteSqlList) {
+        this.midExecuteSqlList = midExecuteSqlList;
+    }
+
+    public List<ExecuteSqlDefinition> getStatisticsExecuteSqlList() {
+        return statisticsExecuteSqlList;
+    }
+
+    public void setStatisticsExecuteSqlList(List<ExecuteSqlDefinition> statisticsExecuteSqlList) {
+        this.statisticsExecuteSqlList = statisticsExecuteSqlList;
+    }
+
+    public ComparisonValueType getComparisonValueType() {
+        return comparisonValueType;
+    }
+
+    public void setComparisonValueType(ComparisonValueType comparisonValueType) {
+        this.comparisonValueType = comparisonValueType;
+    }
+
+    public String getComparisonParameter() {
+        return comparisonParameter;
+    }
+
+    public void setComparisonParameter(String comparisonParameter) {
+        this.comparisonParameter = comparisonParameter;
+    }
+}

@@ -17,6 +17,7 @@
 
 package org.apache.dolphinscheduler.server.master.consumer;
 
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import org.apache.dolphinscheduler.common.Constants;
 import org.apache.dolphinscheduler.common.enums.ExecutionStatus;
 import org.apache.dolphinscheduler.common.enums.ResourceType;
@@ -27,6 +28,7 @@ import org.apache.dolphinscheduler.common.model.TaskNode;
 import org.apache.dolphinscheduler.common.process.ResourceInfo;
 import org.apache.dolphinscheduler.common.task.AbstractParameters;
 import org.apache.dolphinscheduler.common.task.datax.DataxParameters;
+import org.apache.dolphinscheduler.common.task.dqs.DataQualityParameters;
 import org.apache.dolphinscheduler.common.task.procedure.ProcedureParameters;
 import org.apache.dolphinscheduler.common.task.sql.SqlParameters;
 import org.apache.dolphinscheduler.common.task.sqoop.SqoopParameters;
@@ -39,17 +41,15 @@ import org.apache.dolphinscheduler.common.utils.FileUtils;
 import org.apache.dolphinscheduler.common.utils.JSONUtils;
 import org.apache.dolphinscheduler.common.utils.StringUtils;
 import org.apache.dolphinscheduler.common.utils.TaskParametersUtils;
+import org.apache.dolphinscheduler.dao.datasource.MySQLDataSource;
+import org.apache.dolphinscheduler.dao.datasource.SpringConnectionFactory;
 import org.apache.dolphinscheduler.dao.entity.DataSource;
 import org.apache.dolphinscheduler.dao.entity.Resource;
 import org.apache.dolphinscheduler.dao.entity.TaskInstance;
 import org.apache.dolphinscheduler.dao.entity.Tenant;
 import org.apache.dolphinscheduler.dao.entity.UdfFunc;
 import org.apache.dolphinscheduler.server.builder.TaskExecutionContextBuilder;
-import org.apache.dolphinscheduler.server.entity.DataxTaskExecutionContext;
-import org.apache.dolphinscheduler.server.entity.ProcedureTaskExecutionContext;
-import org.apache.dolphinscheduler.server.entity.SQLTaskExecutionContext;
-import org.apache.dolphinscheduler.server.entity.SqoopTaskExecutionContext;
-import org.apache.dolphinscheduler.server.entity.TaskExecutionContext;
+import org.apache.dolphinscheduler.server.entity.*;
 import org.apache.dolphinscheduler.server.master.config.MasterConfig;
 import org.apache.dolphinscheduler.server.master.dispatch.ExecutorDispatcher;
 import org.apache.dolphinscheduler.server.master.dispatch.context.ExecutionContext;
@@ -104,6 +104,9 @@ public class TaskPriorityQueueConsumer extends Thread {
     @Autowired
     private ExecutorDispatcher dispatcher;
 
+
+    @Autowired
+    private SpringConnectionFactory springConnectionFactory;
 
     /**
      * master config
@@ -229,6 +232,7 @@ public class TaskPriorityQueueConsumer extends Thread {
         DataxTaskExecutionContext dataxTaskExecutionContext = new DataxTaskExecutionContext();
         ProcedureTaskExecutionContext procedureTaskExecutionContext = new ProcedureTaskExecutionContext();
         SqoopTaskExecutionContext sqoopTaskExecutionContext = new SqoopTaskExecutionContext();
+        DataQualityTaskExecutionContext dataQualityTaskExecutionContext = new DataQualityTaskExecutionContext();
 
         // SQL task
         if (taskType == TaskType.SQL) {
@@ -249,6 +253,10 @@ public class TaskPriorityQueueConsumer extends Thread {
             setSqoopTaskRelation(sqoopTaskExecutionContext, taskNode);
         }
 
+        if (taskType == TaskType.DATA_QUALITY) {
+            setDataQualityTaskRelation(dataQualityTaskExecutionContext, taskNode);
+        }
+
         return TaskExecutionContextBuilder.get()
             .buildTaskInstanceRelatedInfo(taskInstance)
             .buildProcessInstanceRelatedInfo(taskInstance.getProcessInstance())
@@ -257,6 +265,7 @@ public class TaskPriorityQueueConsumer extends Thread {
             .buildDataxTaskRelatedInfo(dataxTaskExecutionContext)
             .buildProcedureTaskRelatedInfo(procedureTaskExecutionContext)
             .buildSqoopTaskRelatedInfo(sqoopTaskExecutionContext)
+            .buildDataQualityTaskRelatedInfo(dataQualityTaskExecutionContext)
             .create();
     }
 
@@ -327,6 +336,53 @@ public class TaskPriorityQueueConsumer extends Thread {
                 sqoopTaskExecutionContext.setTargetConnectionParams(dataTarget.getConnectionParams());
             }
         }
+    }
+
+    /**
+     * set data quality task relation
+     *
+     * @param dataQualityTaskExecutionContext dataQualityTaskExecutionContext
+     * @param taskNode                  taskNode
+     */
+    private void setDataQualityTaskRelation(DataQualityTaskExecutionContext dataQualityTaskExecutionContext, TaskNode taskNode) {
+        DataQualityParameters dataQualityParameters = JSONUtils.parseObject(taskNode.getParams(), DataQualityParameters.class);
+
+        if(dataQualityParameters == null){
+            return ;
+        }
+
+        Map<String,String> config = dataQualityParameters.getRuleInputParameter();
+
+        if(StringUtils.isNotEmpty(config.get("src_connector_id"))){
+            DataSource dataSource = processService.findDataSourceById(Integer.valueOf(config.get("src_connector_id")));
+            if(dataSource != null){
+                dataQualityTaskExecutionContext.setSourceConnectorType(config.get("src_connector_type"));
+                dataQualityTaskExecutionContext.setDataSourceId(dataSource.getId());
+                dataQualityTaskExecutionContext.setSourceType(dataSource.getType().getCode());
+                dataQualityTaskExecutionContext.setSourceConnectionParams(dataSource.getConnectionParams());
+            }
+        }
+
+        if(StringUtils.isNotEmpty(config.get("target_connector_id"))){
+            DataSource dataSource = processService.findDataSourceById(Integer.valueOf(config.get("target_connector_id")));
+            if(dataSource != null){
+                dataQualityTaskExecutionContext.setSourceConnectorType(config.get("target_connector_type"));
+                dataQualityTaskExecutionContext.setDataSourceId(dataSource.getId());
+                dataQualityTaskExecutionContext.setSourceType(dataSource.getType().getCode());
+                dataQualityTaskExecutionContext.setSourceConnectionParams(dataSource.getConnectionParams());
+            }
+        }
+
+        MySQLDataSource mySqlDataSource = new MySQLDataSource();
+        mySqlDataSource.setUser(springConnectionFactory.dataSource().getUsername());
+        mySqlDataSource.setPassword(springConnectionFactory.dataSource().getPassword());
+        mySqlDataSource.setAddress(springConnectionFactory.dataSource().getUrl());
+
+
+        dataQualityTaskExecutionContext.setWriterConnectorType("JDBC");
+        dataQualityTaskExecutionContext.setWriterConnectionParams(JSONUtils.toJsonString(mySqlDataSource));
+        dataQualityTaskExecutionContext.setWriterTable("t_ds_dqs_result");
+        dataQualityTaskExecutionContext.setWriterType(0);
     }
 
     /**
