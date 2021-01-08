@@ -953,30 +953,30 @@ public final class Constants {
     /**
      * data quality task
      */
-    public static final String SRC_CONNECTOR_TYPE = "database";
-    public static final String SRC_DATASOURCE_ID = "";
-    public static final String SRC_TABLE = "database";
-    public static final String SRC_FILTER = "jdbcUrl";
-    public static final String SRC_FILED = "principal";
-    public static final String TARGET_CONNECTOR_TYPE = "other";
-    public static final String TARGET_DATASOURCE_ID = "connectType";
-    public static final String TARGET_TABLE = "table";
-    public static final String TARGET_FILTER = "url";
-    public static final String TARGET_FILED = "driver";
-    public static final String STATISTICS_NAME = "sql";
-    public static final String STATISTICS_EXECUTE_SQL = "database";
-    public static final String COMPARISON_NAME = "jdbcUrl";
-    public static final String COMPARISON_TITLE = "principal";
-    public static final String COMPARISON_VALUE = "other";
-    public static final String COMPARISON_EXECUTE_SQL = "connectType";
-    public static final String MAPPING_COLUMNS = "table";
-    public static final String ON_CLAUSE = "url";
-    public static final String WHERE_CLAUSE = "driver";
-    public static final String CHECK_TYPE = "sql";
-    public static final String THRESHOLD = "url";
-    public static final String OPERATOR = "driver";
-    public static final String STATISTICS_TABLE = "sql";
-    public static final String COMPARISON_TABLE = "sql";
+    public static final String SRC_CONNECTOR_TYPE = "src_connector_type";
+    public static final String SRC_DATASOURCE_ID = "src_datasource_id";
+    public static final String SRC_TABLE = "src_table";
+    public static final String SRC_FILTER = "src_filter";
+    public static final String SRC_FIELD = "src_field";
+    public static final String TARGET_CONNECTOR_TYPE = "target_connector_type";
+    public static final String TARGET_DATASOURCE_ID = "target_datasource_id";
+    public static final String TARGET_TABLE = "target_table";
+    public static final String TARGET_FILTER = "target_filter";
+    public static final String TARGET_FILED = "target_filed";
+    public static final String STATISTICS_NAME = "statistics_name";
+    public static final String STATISTICS_EXECUTE_SQL = "statistics_execute_sql";
+    public static final String COMPARISON_NAME = "comparison_name";
+    public static final String COMPARISON_TITLE = "comparison_title";
+    public static final String COMPARISON_VALUE = "comparison_value";
+    public static final String COMPARISON_EXECUTE_SQL = "comparison_execute_sql";
+    public static final String MAPPING_COLUMNS = "mapping_columns";
+    public static final String ON_CLAUSE = "on_clause";
+    public static final String WHERE_CLAUSE = "where_clause";
+    public static final String CHECK_TYPE = "check_type";
+    public static final String THRESHOLD = "threshold";
+    public static final String OPERATOR = "operator";
+    public static final String STATISTICS_TABLE = "statistics_table";
+    public static final String COMPARISON_TABLE = "comparison_table";
     public static final String AND = " AND ";
 
     /**

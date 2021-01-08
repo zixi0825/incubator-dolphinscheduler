@@ -14,32 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.dolphinscheduler.server.worker.task.dqs.rule;
+package org.apache.dolphinscheduler.server.worker.task.dqs.rule.parser;
 
-import java.util.List;
+import org.apache.dolphinscheduler.server.entity.DataQualityTaskExecutionContext;
+import org.apache.dolphinscheduler.server.worker.task.dqs.rule.RuleDefinition;
+import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parameter.DataQualityConfiguration;
+import java.util.Map;
 
 /**
- * CalculateComparisonValueParameter
+ * IRuleParser
  */
-public class CalculateComparisonValueParameter {
+public interface IRuleParser {
 
-    private List<RuleInputEntry> inputEntryList;
-
-    private List<ExecuteSqlDefinition> comparisonExecuteSqlList;
-
-    public List<RuleInputEntry> getInputEntryList() {
-    return inputEntryList;
-  }
-
-    public void setInputEntryList(List<RuleInputEntry> inputEntryList) {
-    this.inputEntryList = inputEntryList;
-  }
-
-    public List<ExecuteSqlDefinition> getComparisonExecuteSqlList() {
-        return comparisonExecuteSqlList;
-    }
-
-    public void setComparisonExecuteSqlList(List<ExecuteSqlDefinition> comparisonExecuteSqlList) {
-        this.comparisonExecuteSqlList = comparisonExecuteSqlList;
-    }
+    DataQualityConfiguration parse(RuleDefinition ruleDefinition,
+                                   Map<String,String> inputParameterValue,
+                                   DataQualityTaskExecutionContext dataQualityTaskExecutionContext) throws Exception;
 }
