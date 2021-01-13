@@ -19,6 +19,9 @@ package org.apache.dolphinscheduler.common.enums;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ValueType{
+  /**
+   *
+   */
   STRING("string"),
   LIST("list"),
   NUMBER("number");

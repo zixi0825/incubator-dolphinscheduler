@@ -16,6 +16,41 @@
  */
 package org.apache.dolphinscheduler.common.enums;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum ConnectorType {
-    JDBC,HIVE;
+    /**
+     *
+     */
+    JDBC(0,"JDBC"),
+    HIVE(1,"HIVE");
+
+    ConnectorType(int code, String description){
+        this.code = code;
+        this.description = description;
+    }
+
+    @EnumValue
+    private final int code;
+    private final String description;
+
+    @JsonValue
+    public int getCode() {
+        return code;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public static ConnectorType of(int value){
+        for (ConnectorType e:ConnectorType.values()) {
+            if(e.ordinal() == value) {
+                return e;
+            }
+        }
+        //For values out of enum scope
+        return null;
+    }
 }

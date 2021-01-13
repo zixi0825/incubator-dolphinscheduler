@@ -353,20 +353,20 @@ public class TaskPriorityQueueConsumer extends Thread {
 
         Map<String,String> config = dataQualityParameters.getRuleInputParameter();
 
-        if(StringUtils.isNotEmpty(config.get("src_connector_id"))){
-            DataSource dataSource = processService.findDataSourceById(Integer.valueOf(config.get("src_connector_id")));
+        if(StringUtils.isNotEmpty(config.get(Constants.SRC_DATASOURCE_ID))){
+            DataSource dataSource = processService.findDataSourceById(Integer.valueOf(config.get(Constants.SRC_DATASOURCE_ID)));
             if(dataSource != null){
-                dataQualityTaskExecutionContext.setSourceConnectorType(config.get("src_connector_type"));
+                dataQualityTaskExecutionContext.setSourceConnectorType(config.get(Constants.SRC_CONNECTOR_TYPE));
                 dataQualityTaskExecutionContext.setDataSourceId(dataSource.getId());
                 dataQualityTaskExecutionContext.setSourceType(dataSource.getType().getCode());
                 dataQualityTaskExecutionContext.setSourceConnectionParams(dataSource.getConnectionParams());
             }
         }
 
-        if(StringUtils.isNotEmpty(config.get("target_connector_id"))){
-            DataSource dataSource = processService.findDataSourceById(Integer.valueOf(config.get("target_connector_id")));
+        if(StringUtils.isNotEmpty(config.get(Constants.TARGET_DATASOURCE_ID))){
+            DataSource dataSource = processService.findDataSourceById(Integer.valueOf(config.get(Constants.TARGET_DATASOURCE_ID)));
             if(dataSource != null){
-                dataQualityTaskExecutionContext.setSourceConnectorType(config.get("target_connector_type"));
+                dataQualityTaskExecutionContext.setSourceConnectorType(config.get(Constants.TARGET_CONNECTOR_TYPE));
                 dataQualityTaskExecutionContext.setDataSourceId(dataSource.getId());
                 dataQualityTaskExecutionContext.setSourceType(dataSource.getType().getCode());
                 dataQualityTaskExecutionContext.setSourceConnectionParams(dataSource.getConnectionParams());
@@ -377,7 +377,6 @@ public class TaskPriorityQueueConsumer extends Thread {
         mySqlDataSource.setUser(springConnectionFactory.dataSource().getUsername());
         mySqlDataSource.setPassword(springConnectionFactory.dataSource().getPassword());
         mySqlDataSource.setAddress(springConnectionFactory.dataSource().getUrl());
-
 
         dataQualityTaskExecutionContext.setWriterConnectorType("JDBC");
         dataQualityTaskExecutionContext.setWriterConnectionParams(JSONUtils.toJsonString(mySqlDataSource));

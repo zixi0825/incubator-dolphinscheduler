@@ -14,48 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.dolphinscheduler.common.enums;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.fasterxml.jackson.annotation.JsonValue;
+public enum PropsType {
 
-public enum FormType{
+    INPUT("input"),
 
-  /**
-   *
-   */
-  INPUT(0,"input"),
-  RADIO(1,"radio"),
-  SELECT(2,"select"),
-  SWITCH(3,"checkbox"),
-  CASCADER(4,"cascader");
+    PASSWORD("password"),
 
-  FormType(int code, String description){
-    this.code = code;
-    this.description = description;
-  }
+    TEXTAREA("textarea");
 
-  @EnumValue
-  private final int code;
+    private String propsType;
 
-  private final String description;
-
-  public int getCode() {
-    return code;
-  }
-
-  @JsonValue
-  public String getDescription() {
-    return description;
-  }
-
-  public static FormType of(int value){
-    for (FormType e:FormType.values()) {
-      if(e.ordinal() == value) {
-        return e;
-      }
+    PropsType(String propsType) {
+        this.propsType = propsType;
     }
-    //For values out of enum scope
-    return null;
-  }
+
+    public String getPropsType() {
+        return this.propsType;
+    }
 }

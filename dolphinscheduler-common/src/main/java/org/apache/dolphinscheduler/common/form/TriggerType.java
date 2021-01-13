@@ -14,44 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.dolphinscheduler.common.enums;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.fasterxml.jackson.annotation.JsonValue;
+package org.apache.dolphinscheduler.common.form;
 
-public enum OptionSourceType{
+public enum TriggerType {
 
-  /**
-   *
-   */
-  DEFAULT(0,"default"),
-  DATASOURCE(1,"datasource");
+    BLUR("blur"),
 
-  OptionSourceType(int code, String description){
-    this.code = code;
-    this.description = description;
-  }
+    CHANGE("change");
 
-  @EnumValue
-  private final int code;
-  private final String description;
+    private String triggerType;
 
-  @JsonValue
-  public int getCode() {
-    return code;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public static OptionSourceType of(int value){
-    for (OptionSourceType e:OptionSourceType.values()) {
-      if(e.ordinal() == value) {
-        return e;
-      }
+    TriggerType(String triggerType) {
+        this.triggerType = triggerType;
     }
-    //For values out of enum scope
-    return null;
-  }
+
+    public String getTriggerType() {
+        return this.triggerType;
+    }
+
 }

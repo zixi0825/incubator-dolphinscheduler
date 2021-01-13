@@ -16,7 +16,41 @@
  */
 package org.apache.dolphinscheduler.common.enums;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum ComparisonValueType {
-    FIXED_VALUE,
-    CALCULATE_VALUE;
+    /**
+     *
+     */
+    FIXED_VALUE(0,"fixed_value"),
+    CALCULATE_VALUE(1,"calculate_value");
+
+    ComparisonValueType(int code, String description){
+        this.code = code;
+        this.description = description;
+    }
+
+    @EnumValue
+    private final int code;
+    private final String description;
+
+    @JsonValue
+    public int getCode() {
+        return code;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public static ComparisonValueType of(int value){
+        for (ComparisonValueType e:ComparisonValueType.values()) {
+            if(e.ordinal() == value) {
+                return e;
+            }
+        }
+        //For values out of enum scope
+        return null;
+    }
 }

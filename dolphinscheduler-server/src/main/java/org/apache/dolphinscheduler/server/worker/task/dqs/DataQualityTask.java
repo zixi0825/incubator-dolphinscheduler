@@ -16,8 +16,137 @@
  */
 package org.apache.dolphinscheduler.server.worker.task.dqs;
 
+import org.apache.dolphinscheduler.common.Constants;
+import org.apache.dolphinscheduler.common.enums.CommandType;
+import org.apache.dolphinscheduler.common.process.Property;
+import org.apache.dolphinscheduler.common.process.ResourceInfo;
+import org.apache.dolphinscheduler.common.task.AbstractParameters;
+import org.apache.dolphinscheduler.common.task.dqs.DataQualityParameters;
+import org.apache.dolphinscheduler.common.utils.CommonUtils;
+import org.apache.dolphinscheduler.common.utils.JSONUtils;
+import org.apache.dolphinscheduler.common.utils.ParameterUtils;
+import org.apache.dolphinscheduler.common.utils.StringUtils;
+import org.apache.dolphinscheduler.server.entity.TaskExecutionContext;
+import org.apache.dolphinscheduler.server.utils.ParamUtils;
+import org.apache.dolphinscheduler.server.utils.SparkArgsUtils;
+import org.apache.dolphinscheduler.server.worker.task.AbstractYarnTask;
+import org.apache.dolphinscheduler.server.worker.task.dqs.rule.RuleManager;
+import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parameter.DataQualityConfiguration;
+import org.slf4j.Logger;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * DataQualityTask
  */
-public class DataQualityTask {
+public class DataQualityTask extends AbstractYarnTask {
+
+    /**
+     * spark2 command
+     */
+    private static final String SPARK2_COMMAND = "${SPARK_HOME2}/bin/spark-submit";
+
+    private DataQualityParameters dataQualityParameters;
+    /**
+     * taskExecutionContext
+     */
+    private final TaskExecutionContext taskExecutionContext;
+
+    public DataQualityTask(TaskExecutionContext taskExecutionContext, Logger logger){
+        super(taskExecutionContext, logger);
+        this.taskExecutionContext = taskExecutionContext;
+    }
+
+    @Override
+    public void init() throws Exception {
+        logger.info("data quality task params {}", taskExecutionContext.getTaskParams());
+
+        dataQualityParameters = JSONUtils.parseObject(taskExecutionContext.getTaskParams(), DataQualityParameters.class);
+
+        if (null == dataQualityParameters) {
+            logger.error("data quality params is null");
+            return;
+        }
+
+        if (!dataQualityParameters.checkParameters()) {
+            throw new RuntimeException("data quality task params is not valid");
+        }
+
+        if(StringUtils.isEmpty(dataQualityParameters.getRuleJson())){
+            throw new RuntimeException("rule json is null");
+        }
+
+        RuleManager ruleManager = new RuleManager(
+                dataQualityParameters.getRuleJson(),
+                dataQualityParameters.getRuleInputParameter(),
+                taskExecutionContext.getDataQualityTaskExecutionContext());
+
+        DataQualityConfiguration dataQualityConfiguration =
+                ruleManager.generateDataQualityParameter();
+
+        dataQualityParameters
+                .getSparkParameters()
+                .setMainArgs(replaceDoubleBrackets(JSONUtils.toJsonString(dataQualityConfiguration)));
+
+        dataQualityParameters
+                .getSparkParameters()
+                .setQueue(taskExecutionContext.getQueue());
+
+        setMainJarName();
+    }
+
+    @Override
+    protected String buildCommand() throws Exception {
+        List<String> args = new ArrayList<>();
+
+        args.add(SPARK2_COMMAND);
+
+        // other parameters
+        args.addAll(SparkArgsUtils.buildArgs(dataQualityParameters.getSparkParameters()));
+
+        // replace placeholder
+        Map<String, Property> paramsMap = ParamUtils.convert(ParamUtils.getUserDefParamsMap(
+                taskExecutionContext.getDefinedParams()),
+                taskExecutionContext.getDefinedParams(),
+                dataQualityParameters.getSparkParameters().getLocalParametersMap(),
+                CommandType.of(taskExecutionContext.getCmdTypeIfComplement()),
+                taskExecutionContext.getScheduleTime());
+
+        String command = null;
+
+        if (null != paramsMap) {
+            command = ParameterUtils.convertParameterPlaceholders(String.join(" ", args), ParamUtils.convert(paramsMap));
+        }
+
+        logger.info("spark task command: {}", command);
+
+        return command;
+    }
+
+    @Override
+    protected void setMainJarName() {
+        ResourceInfo mainJar = new ResourceInfo();
+        mainJar.setRes(System.getProperty("user.dir")+ File.separator+"lib"+File.separator+CommonUtils.getDqsJarName());
+        dataQualityParameters.getSparkParameters().setMainJar(mainJar);
+    }
+
+    @Override
+    public AbstractParameters getParameters() {
+        return dataQualityParameters;
+    }
+
+    private String replaceDoubleBrackets(String mainParameter){
+
+        mainParameter = mainParameter
+                .replace(Constants.DOUBLE_BRACKETS_LEFT,Constants.DOUBLE_BRACKETS_LEFT_SPACE)
+                .replace(Constants.DOUBLE_BRACKETS_RIGHT,Constants.DOUBLE_BRACKETS_RIGHT_SPACE);
+        if(mainParameter.contains(Constants.DOUBLE_BRACKETS_LEFT) || mainParameter.contains(Constants.DOUBLE_BRACKETS_RIGHT)){
+            return replaceDoubleBrackets(mainParameter);
+        }else{
+            return  mainParameter;
+        }
+
+    }
 }

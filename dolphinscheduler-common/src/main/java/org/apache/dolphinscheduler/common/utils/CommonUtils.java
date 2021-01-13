@@ -42,6 +42,15 @@ public class CommonUtils {
         throw new UnsupportedOperationException("Construct CommonUtils");
     }
 
+    public static String getDqsJarName(){
+        String dqsJarName = PropertyUtils.getString(Constants.DOLPHINSCHEDULER_DQS_JAR_NAME);
+        if(StringUtils.isEmpty(dqsJarName)){
+            return StringUtils.EMPTY;
+        }
+
+        return dqsJarName;
+    }
+
     /**
      * @return get the path of system environment variables
      */

@@ -1059,4 +1059,29 @@ public final class Constants {
      * pstree, get pud and sub pid
      */
     public static final String PSTREE = "pstree";
+
+    /**
+     * dolphinscheduler.env.path
+     */
+    public static final String DOLPHINSCHEDULER_DQS_JAR_NAME = "dqs.jar.name";
+
+    /**
+     * double brackets left
+     */
+    public static final String DOUBLE_BRACKETS_LEFT = "{{";
+
+    /**
+     * double brackets left
+     */
+    public static final String DOUBLE_BRACKETS_RIGHT = "}}";
+
+    /**
+     * double brackets left
+     */
+    public static final String DOUBLE_BRACKETS_LEFT_SPACE = "{ {";
+
+    /**
+     * double brackets left
+     */
+    public static final String DOUBLE_BRACKETS_RIGHT_SPACE = "} }";
 }

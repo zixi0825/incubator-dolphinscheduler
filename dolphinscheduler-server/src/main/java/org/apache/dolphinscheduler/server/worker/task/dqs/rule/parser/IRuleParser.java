@@ -17,7 +17,7 @@
 package org.apache.dolphinscheduler.server.worker.task.dqs.rule.parser;
 
 import org.apache.dolphinscheduler.server.entity.DataQualityTaskExecutionContext;
-import org.apache.dolphinscheduler.server.worker.task.dqs.rule.RuleDefinition;
+import org.apache.dolphinscheduler.common.task.dqs.rule.RuleDefinition;
 import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parameter.DataQualityConfiguration;
 import java.util.Map;
 

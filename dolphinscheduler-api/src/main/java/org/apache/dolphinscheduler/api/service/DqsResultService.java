@@ -14,44 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.dolphinscheduler.common.enums;
+package org.apache.dolphinscheduler.api.service;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.Map;
 
-public enum OptionSourceType{
+/**
+ * DqsResultService
+ */
+public interface DqsResultService {
 
-  /**
-   *
-   */
-  DEFAULT(0,"default"),
-  DATASOURCE(1,"datasource");
-
-  OptionSourceType(int code, String description){
-    this.code = code;
-    this.description = description;
-  }
-
-  @EnumValue
-  private final int code;
-  private final String description;
-
-  @JsonValue
-  public int getCode() {
-    return code;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public static OptionSourceType of(int value){
-    for (OptionSourceType e:OptionSourceType.values()) {
-      if(e.ordinal() == value) {
-        return e;
-      }
-    }
-    //For values out of enum scope
-    return null;
-  }
+    Map<String, Object> getByTaskInstanceId(int taskInstanceId);
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.dolphinscheduler.server.worker.task.dqs.rule;
+package org.apache.dolphinscheduler.common.task.dqs.rule;
 
 import org.apache.dolphinscheduler.common.enums.ComparisonValueType;
 import org.apache.dolphinscheduler.common.enums.RuleType;

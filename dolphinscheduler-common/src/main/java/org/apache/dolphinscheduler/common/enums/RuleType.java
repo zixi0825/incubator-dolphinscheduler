@@ -16,8 +16,43 @@
  */
 package org.apache.dolphinscheduler.common.enums;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+
 public enum RuleType{
-    SINGLE_TABLE,
-    MULTI_TABLE_ACCURACY,
-    MULTI_TABLE_COMPARISON;
+    /**
+     *
+     */
+    SINGLE_TABLE(0,"single_table"),
+    MULTI_TABLE_ACCURACY(1,"multi_table_accuracy"),
+    MULTI_TABLE_COMPARISON(2,"multi_table_comparison");
+
+    RuleType(int code, String description){
+        this.code = code;
+        this.description = description;
+    }
+
+    @EnumValue
+    private final int code;
+    private final String description;
+
+    @JsonValue
+    public int getCode() {
+        return code;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public static RuleType of(int value){
+        for (RuleType e:RuleType.values()) {
+            if(e.ordinal() == value) {
+                return e;
+            }
+        }
+        //For values out of enum scope
+        return null;
+    }
 }

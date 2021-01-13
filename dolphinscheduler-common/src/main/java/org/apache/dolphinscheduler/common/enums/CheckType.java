@@ -16,7 +16,45 @@
  */
 package org.apache.dolphinscheduler.common.enums;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+/**
+ * CheckType
+ */
 public enum CheckType{
-    FIXED_VALUE,
-    PERCENTAGE;
+    /**
+     * 0-fixed_value
+     * 1-percentage
+     */
+    FIXED_VALUE(0,"fixed_value"),
+    PERCENTAGE(1,"percentage");
+
+    CheckType(int code, String description){
+        this.code = code;
+        this.description = description;
+    }
+
+    @EnumValue
+    private final int code;
+    private final String description;
+
+    @JsonValue
+    public int getCode() {
+        return code;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public static CheckType of(int value){
+        for (CheckType e:CheckType.values()) {
+            if(e.ordinal() == value) {
+                return e;
+            }
+        }
+        //For values out of enum scope
+        return null;
+    }
 }

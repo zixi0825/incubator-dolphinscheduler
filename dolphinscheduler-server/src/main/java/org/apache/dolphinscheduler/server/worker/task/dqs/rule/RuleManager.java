@@ -17,6 +17,10 @@
 package org.apache.dolphinscheduler.server.worker.task.dqs.rule;
 
 import org.apache.dolphinscheduler.common.enums.*;
+import org.apache.dolphinscheduler.common.task.dqs.rule.CalculateComparisonValueParameter;
+import org.apache.dolphinscheduler.common.task.dqs.rule.ExecuteSqlDefinition;
+import org.apache.dolphinscheduler.common.task.dqs.rule.RuleDefinition;
+import org.apache.dolphinscheduler.common.task.dqs.rule.RuleInputEntry;
 import org.apache.dolphinscheduler.server.entity.DataQualityTaskExecutionContext;
 import org.apache.dolphinscheduler.server.utils.RuleParserUtils;
 import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parameter.*;
@@ -26,6 +30,7 @@ import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parser.IRuleParse
 import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parser.MultiTableAccuracyRuleParser;
 import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parser.MultiTableComparisonRuleParser;
 import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parser.SingleTableRuleParser;
+import java.io.File;
 import java.util.*;
 import static org.apache.dolphinscheduler.common.Constants.*;
 
@@ -101,6 +106,7 @@ public class RuleManager {
          */
         //根据ruleType
         RuleDefinition ruleDefinition = JSONUtils.parseObject(ruleJson,RuleDefinition.class);
+        System.out.println(ruleJson);
 
         if(ruleDefinition == null){
             return null;
@@ -134,7 +140,9 @@ public class RuleManager {
     public static void main(String[] args) throws Exception{
 //        testMultiTableAccuracy();
 //        testMultiTableComparison();
-        testSingleTable();
+//        testSingleTable();
+        System.out.println(System.getProperty("user.dir")+ File.separator+"lib\\");
+//        createFolder("hello");
     }
 
     private static void testSingleTable() throws Exception{
@@ -153,7 +161,9 @@ public class RuleManager {
         srcConnectorType.setValue("JDBC");
         srcConnectorType.setPlaceholder("${src_connector_type}");
         srcConnectorType.setOptionSourceType(OptionSourceType.DEFAULT);
-        srcConnectorType.setOptions("[{label:\"HIVE\",value:\"HIVE\"},{label:\"JDBC\",value:\"JDBC\"}]");
+        srcConnectorType.setOptions("[{\"label\":\"HIVE\",\"value\":\"HIVE\"},{\"label\":\"JDBC\",\"value\":\"JDBC\"}]");
+        srcConnectorType.setInputType(InputType.DEFAULT);
+        srcConnectorType.setValueType(ValueType.NUMBER);
 
         RuleInputEntry srcDatasourceId = new RuleInputEntry();
         srcDatasourceId.setTitle("源数据ID");
@@ -163,6 +173,8 @@ public class RuleManager {
         srcDatasourceId.setShow(true);
         srcDatasourceId.setPlaceholder("${comparison_value}");
         srcDatasourceId.setOptionSourceType(OptionSourceType.DATASOURCE);
+        srcDatasourceId.setInputType(InputType.DEFAULT);
+        srcDatasourceId.setValueType(ValueType.NUMBER);
 
         RuleInputEntry srcTable = new RuleInputEntry();
         srcTable.setTitle("源数据表名");
@@ -172,6 +184,8 @@ public class RuleManager {
         srcTable.setShow(true);
         srcTable.setPlaceholder("${src_table}");
         srcTable.setOptionSourceType(OptionSourceType.DEFAULT);
+        srcTable.setInputType(InputType.DEFAULT);
+        srcTable.setValueType(ValueType.STRING);
 
         RuleInputEntry srcFilter = new RuleInputEntry();
         srcFilter.setTitle("源数据过滤条件");
@@ -181,9 +195,11 @@ public class RuleManager {
         srcFilter.setShow(true);
         srcFilter.setPlaceholder("${src_filter}");
         srcFilter.setOptionSourceType(OptionSourceType.DEFAULT);
+        srcFilter.setInputType(InputType.DEFAULT);
+        srcFilter.setValueType(ValueType.STRING);
 
         RuleInputEntry srcField = new RuleInputEntry();
-        srcField.setTitle("源数据过滤条件");
+        srcField.setTitle("源数据列");
         srcField.setField(SRC_FIELD);
         srcField.setType(FormType.INPUT);
         srcField.setCanEdit(true);
@@ -191,6 +207,8 @@ public class RuleManager {
         srcField.setValue(" ");
         srcField.setPlaceholder("${src_field}");
         srcField.setOptionSourceType(OptionSourceType.DEFAULT);
+        srcField.setInputType(InputType.DEFAULT);
+        srcField.setValueType(ValueType.STRING);
 
         RuleInputEntry statisticsName = new RuleInputEntry();
         statisticsName.setTitle("统计指标名");
@@ -201,6 +219,8 @@ public class RuleManager {
         statisticsName.setValue("miss_items.miss");
         statisticsName.setPlaceholder("${statistics_name}");
         statisticsName.setOptionSourceType(OptionSourceType.DEFAULT);
+        statisticsName.setInputType(InputType.STATISTICS);
+        statisticsName.setValueType(ValueType.STRING);
 
         defaultInputEntryList.add(srcConnectorType);
         defaultInputEntryList.add(srcDatasourceId);
@@ -239,6 +259,8 @@ public class RuleManager {
         comparisonTitle.setCanEdit(false);
         comparisonTitle.setShow(true);
         comparisonTitle.setPlaceholder("${comparison_title}");
+        comparisonTitle.setInputType(InputType.COMPARISON);
+        comparisonTitle.setValueType(ValueType.STRING);
 
         RuleInputEntry comparisonValue = new RuleInputEntry();
         comparisonValue.setTitle("比对值");
@@ -247,15 +269,19 @@ public class RuleManager {
         comparisonValue.setCanEdit(false);
         comparisonValue.setShow(true);
         comparisonValue.setPlaceholder("${comparison_value}");
+        comparisonValue.setInputType(InputType.COMPARISON);
+        comparisonValue.setValueType(ValueType.NUMBER);
 
         RuleInputEntry comparisonName = new RuleInputEntry();
         comparisonName.setTitle("比对值名");
         comparisonName.setField("comparison_name");
         comparisonName.setType(FormType.INPUT);
         comparisonName.setCanEdit(false);
-        comparisonName.setShow(true);
+        comparisonName.setShow(false);
         comparisonName.setValue("total_count.total");
         comparisonName.setPlaceholder("${comparison_name}");
+        comparisonName.setInputType(InputType.COMPARISON);
+        comparisonName.setValueType(ValueType.STRING);
 
         comparisonInputEntryList.add(comparisonTitle);
         comparisonInputEntryList.add(comparisonValue);
@@ -458,6 +484,7 @@ public class RuleManager {
     }
 
     private static void testMultiTableAccuracy() throws Exception {
+
         RuleDefinition ruleDefinition = new RuleDefinition();
         ruleDefinition.setRuleName("跨表准确性");
         ruleDefinition.setRuleType(RuleType.MULTI_TABLE_ACCURACY);
@@ -465,45 +492,53 @@ public class RuleManager {
         List<RuleInputEntry> defaultInputEntryList = new ArrayList<>();
 
         RuleInputEntry srcConnectorType = new RuleInputEntry();
-        srcConnectorType.setTitle("源数据类型");
+        srcConnectorType.setTitle("源_数据类型");
         srcConnectorType.setField("src_connector_type");
         srcConnectorType.setType(FormType.SELECT);
         srcConnectorType.setCanEdit(true);
         srcConnectorType.setShow(true);
         srcConnectorType.setValue("JDBC");
-        srcConnectorType.setPlaceholder("${src_connector_type}");
+        srcConnectorType.setPlaceholder("请选择数据源类型");
         srcConnectorType.setOptionSourceType(OptionSourceType.DEFAULT);
-        srcConnectorType.setOptions("[{label:\"HIVE\",value:\"HIVE\"},{label:\"JDBC\",value:\"JDBC\"}]");
+        srcConnectorType.setOptions("[{\"label\":\"HIVE\",\"value\":\"HIVE\"},{\"label\":\"JDBC\",\"value\":\"JDBC\"}]");
+        srcConnectorType.setInputType(InputType.DEFAULT);
+        srcConnectorType.setValueType(ValueType.NUMBER);
 
         RuleInputEntry srcDatasourceId = new RuleInputEntry();
-        srcDatasourceId.setTitle("源数据ID");
+        srcDatasourceId.setTitle("源_数据源ID");
         srcDatasourceId.setField("src_datasource_id");
         srcDatasourceId.setType(FormType.CASCADER);
         srcDatasourceId.setCanEdit(true);
         srcDatasourceId.setShow(true);
         srcDatasourceId.setPlaceholder("${comparison_value}");
         srcDatasourceId.setOptionSourceType(OptionSourceType.DATASOURCE);
+        srcDatasourceId.setInputType(InputType.DEFAULT);
+        srcDatasourceId.setValueType(ValueType.NUMBER);
 
         RuleInputEntry srcTable = new RuleInputEntry();
-        srcTable.setTitle("源数据表名");
+        srcTable.setTitle("源_数据表名");
         srcTable.setField("src_table");
         srcTable.setType(FormType.INPUT);
         srcTable.setCanEdit(true);
         srcTable.setShow(true);
         srcTable.setPlaceholder("${src_table}");
         srcTable.setOptionSourceType(OptionSourceType.DEFAULT);
+        srcTable.setInputType(InputType.DEFAULT);
+        srcTable.setValueType(ValueType.STRING);
 
         RuleInputEntry srcFilter = new RuleInputEntry();
-        srcFilter.setTitle("源数据过滤条件");
+        srcFilter.setTitle("源_数据过滤条件");
         srcFilter.setField("src_filter");
         srcFilter.setType(FormType.INPUT);
         srcFilter.setCanEdit(true);
         srcFilter.setShow(true);
         srcFilter.setPlaceholder("${src_filter}");
         srcFilter.setOptionSourceType(OptionSourceType.DEFAULT);
+        srcFilter.setInputType(InputType.DEFAULT);
+        srcFilter.setValueType(ValueType.STRING);
 
         RuleInputEntry targetConnectorType = new RuleInputEntry();
-        targetConnectorType.setTitle("目标数据类型");
+        targetConnectorType.setTitle("目标_数据源类型");
         targetConnectorType.setField("target_connector_type");
         targetConnectorType.setType(FormType.SELECT);
         targetConnectorType.setCanEdit(true);
@@ -511,43 +546,53 @@ public class RuleManager {
         targetConnectorType.setValue("JDBC");
         targetConnectorType.setPlaceholder("${target_connector_type}");
         targetConnectorType.setOptionSourceType(OptionSourceType.DEFAULT);
-        targetConnectorType.setOptions("[{label:\"HIVE\",value:\"HIVE\"},{label:\"JDBC\",value:\"JDBC\"}]");
+        targetConnectorType.setOptions("[{\"label\":\"HIVE\",\"value\":\"HIVE\"},{\"label\":\"JDBC\",\"value\":\"JDBC\"}]");
+        targetConnectorType.setInputType(InputType.DEFAULT);
+        targetConnectorType.setValueType(ValueType.STRING);
 
         RuleInputEntry targetDatasourceId = new RuleInputEntry();
-        targetDatasourceId.setTitle("目标数据源ID");
+        targetDatasourceId.setTitle("目标_数据源ID");
         targetDatasourceId.setField("target_datasource_id");
         targetDatasourceId.setType(FormType.CASCADER);
         targetDatasourceId.setCanEdit(true);
         targetDatasourceId.setShow(true);
         targetDatasourceId.setPlaceholder("${target_datasource_id}");
         targetDatasourceId.setOptionSourceType(OptionSourceType.DATASOURCE);
+        targetDatasourceId.setInputType(InputType.DEFAULT);
+        targetDatasourceId.setValueType(ValueType.NUMBER);
 
         RuleInputEntry targetTable = new RuleInputEntry();
-        targetTable.setTitle("目标数据表名");
+        targetTable.setTitle("目标_数据表名");
         targetTable.setField("target_table");
         targetTable.setType(FormType.INPUT);
         targetTable.setCanEdit(true);
         targetTable.setShow(true);
         targetTable.setPlaceholder("${target_table}");
         targetTable.setOptionSourceType(OptionSourceType.DEFAULT);
+        targetTable.setInputType(InputType.DEFAULT);
+        targetTable.setValueType(ValueType.NUMBER);
 
         RuleInputEntry targetFilter = new RuleInputEntry();
-        targetFilter.setTitle("目标数据过滤条件");
+        targetFilter.setTitle("目标_数据过滤条件");
         targetFilter.setField("target_filter");
         targetFilter.setType(FormType.INPUT);
         targetFilter.setCanEdit(true);
         targetFilter.setShow(true);
         targetFilter.setPlaceholder("${target_filter}");
         targetFilter.setOptionSourceType(OptionSourceType.DEFAULT);
+        targetFilter.setInputType(InputType.DEFAULT);
+        targetFilter.setValueType(ValueType.STRING);
 
         RuleInputEntry mappingColumns = new RuleInputEntry();
-        mappingColumns.setTitle("映射列名");
+        mappingColumns.setTitle("检查列名");
         mappingColumns.setField("mapping_columns");
         mappingColumns.setType(FormType.INPUT);
         mappingColumns.setCanEdit(true);
         mappingColumns.setShow(true);
         mappingColumns.setPlaceholder("${mapping_columns}");
         mappingColumns.setOptionSourceType(OptionSourceType.DEFAULT);
+        mappingColumns.setInputType(InputType.DEFAULT);
+        mappingColumns.setValueType(ValueType.NUMBER);
 
         RuleInputEntry statisticsName = new RuleInputEntry();
         statisticsName.setTitle("统计指标名");
@@ -558,15 +603,17 @@ public class RuleManager {
         statisticsName.setValue("miss_items.miss");
         statisticsName.setPlaceholder("${statistics_name}");
         statisticsName.setOptionSourceType(OptionSourceType.DEFAULT);
+        statisticsName.setInputType(InputType.DEFAULT);
+        statisticsName.setValueType(ValueType.STRING);
 
         defaultInputEntryList.add(srcConnectorType);
         defaultInputEntryList.add(srcDatasourceId);
-        defaultInputEntryList.add(srcFilter);
         defaultInputEntryList.add(srcTable);
+        defaultInputEntryList.add(srcFilter);
         defaultInputEntryList.add(targetConnectorType);
         defaultInputEntryList.add(targetDatasourceId);
-        defaultInputEntryList.add(targetFilter);
         defaultInputEntryList.add(targetTable);
+        defaultInputEntryList.add(targetFilter);
         defaultInputEntryList.add(mappingColumns);
         defaultInputEntryList.add(statisticsName);
 
@@ -608,13 +655,14 @@ public class RuleManager {
         comparisonTitle.setCanEdit(false);
         comparisonTitle.setShow(true);
         comparisonTitle.setPlaceholder("${comparison_title}");
+        comparisonTitle.setValue("目标表总行数");
 
         RuleInputEntry comparisonValue = new RuleInputEntry();
         comparisonValue.setTitle("比对值");
         comparisonValue.setField("comparison_value");
         comparisonValue.setType(FormType.INPUT);
         comparisonValue.setCanEdit(false);
-        comparisonValue.setShow(true);
+        comparisonValue.setShow(false);
         comparisonValue.setPlaceholder("${comparison_value}");
 
         RuleInputEntry comparisonName = new RuleInputEntry();
@@ -622,7 +670,7 @@ public class RuleManager {
         comparisonName.setField("comparison_name");
         comparisonName.setType(FormType.INPUT);
         comparisonName.setCanEdit(false);
-        comparisonName.setShow(true);
+        comparisonName.setShow(false);
         comparisonName.setValue("total_count.total");
         comparisonName.setPlaceholder("${comparison_name}");
 

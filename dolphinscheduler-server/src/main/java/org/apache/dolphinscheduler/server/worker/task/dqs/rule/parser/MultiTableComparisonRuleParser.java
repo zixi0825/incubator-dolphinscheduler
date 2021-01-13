@@ -19,7 +19,7 @@ package org.apache.dolphinscheduler.server.worker.task.dqs.rule.parser;
 import org.apache.dolphinscheduler.common.utils.ParameterUtils;
 import org.apache.dolphinscheduler.server.entity.DataQualityTaskExecutionContext;
 import org.apache.dolphinscheduler.server.utils.RuleParserUtils;
-import org.apache.dolphinscheduler.server.worker.task.dqs.rule.RuleDefinition;
+import org.apache.dolphinscheduler.common.task.dqs.rule.RuleDefinition;
 import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parameter.*;
 import java.util.ArrayList;
 import java.util.List;

@@ -847,3 +847,37 @@ INSERT INTO `t_ds_relation_user_alertgroup` VALUES ('1', '1', '1', '2018-11-29 1
 -- Records of t_ds_user
 -- ----------------------------
 INSERT INTO `t_ds_user` VALUES ('1', 'admin', '7ad2410b2f4c074479a8937a28a22b8f', '0', 'xxx@qq.com', '', '0', '2018-03-27 15:48:50', '2018-10-24 17:40:22', null, 1);
+
+
+-- ----------------------------
+-- Table structure for t_ds_dqs_result
+-- ----------------------------
+DROP TABLE IF EXISTS `t_ds_dqs_result`;
+CREATE TABLE `t_ds_dqs_result` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `task_id` bigint(20) DEFAULT NULL COMMENT 'task id',
+  `task_instance_id` bigint(20) DEFAULT NULL COMMENT 'task instance id',
+  `rule_type` int(11) DEFAULT NULL COMMENT 'rule type',
+  `statistics_value` double DEFAULT NULL COMMENT 'statistics value',
+  `comparison_value` double DEFAULT NULL COMMENT 'comparison value',
+  `check_type` int(11) DEFAULT NULL COMMENT 'check type',
+  `threshold` double DEFAULT NULL COMMENT 'threshold',
+  `operator` int(11) DEFAULT NULL COMMENT 'operator',
+  `create_time` datetime DEFAULT NULL COMMENT 'create time',
+  `update_time` datetime DEFAULT NULL COMMENT 'update time',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='rule calculate result'
+
+-- ----------------------------
+-- Table structure for t_ds_dqs_rule
+-- ----------------------------
+DROP TABLE IF EXISTS `t_ds_dqs_rule`;
+CREATE TABLE `t_ds_dqs_rule` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `name` varchar(100) DEFAULT NULL COMMENT 'rule name',
+  `type` int(11) DEFAULT NULL COMMENT 'rule type',
+  `rule_json` text COMMENT 'rule json info',
+  `create_time` datetime DEFAULT NULL COMMENT 'create time',
+  `update_time` datetime DEFAULT NULL COMMENT 'update_time',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='rule info'

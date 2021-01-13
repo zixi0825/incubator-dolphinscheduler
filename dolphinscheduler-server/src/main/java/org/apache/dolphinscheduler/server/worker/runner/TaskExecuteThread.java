@@ -98,9 +98,9 @@ public class TaskExecuteThread implements Runnable {
      * @param taskExecutionContext taskExecutionContext
      * @param taskCallbackService taskCallbackService
      */
-    public TaskExecuteThread(TaskExecutionContext taskExecutionContext
-            , TaskCallbackService taskCallbackService
-            , Logger taskLogger) {
+    public TaskExecuteThread(TaskExecutionContext taskExecutionContext,
+                             TaskCallbackService taskCallbackService,
+                             Logger taskLogger) {
         this.taskExecutionContext = taskExecutionContext;
         this.taskCallbackService = taskCallbackService;
         this.taskExecutionContextCacheManager = SpringApplicationContext.getBean(TaskExecutionContextCacheManagerImpl.class);

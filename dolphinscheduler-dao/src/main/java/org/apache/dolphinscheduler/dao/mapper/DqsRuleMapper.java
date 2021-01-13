@@ -14,32 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.dolphinscheduler.server.worker.task.dqs.rule;
+package org.apache.dolphinscheduler.dao.mapper;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.dolphinscheduler.dao.entity.DqsRule;
 
 /**
- * CalculateComparisonValueParameter
+ * DqsRuleMapper
  */
-public class CalculateComparisonValueParameter {
-
-    private List<RuleInputEntry> inputEntryList;
-
-    private List<ExecuteSqlDefinition> comparisonExecuteSqlList;
-
-    public List<RuleInputEntry> getInputEntryList() {
-    return inputEntryList;
-  }
-
-    public void setInputEntryList(List<RuleInputEntry> inputEntryList) {
-    this.inputEntryList = inputEntryList;
-  }
-
-    public List<ExecuteSqlDefinition> getComparisonExecuteSqlList() {
-        return comparisonExecuteSqlList;
-    }
-
-    public void setComparisonExecuteSqlList(List<ExecuteSqlDefinition> comparisonExecuteSqlList) {
-        this.comparisonExecuteSqlList = comparisonExecuteSqlList;
-    }
+public interface DqsRuleMapper extends BaseMapper<DqsRule> {
 }

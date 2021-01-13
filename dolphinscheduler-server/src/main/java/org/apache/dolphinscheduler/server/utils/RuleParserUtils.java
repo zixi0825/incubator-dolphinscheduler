@@ -18,6 +18,7 @@ package org.apache.dolphinscheduler.server.utils;
 
 import org.apache.dolphinscheduler.common.enums.ComparisonValueType;
 import org.apache.dolphinscheduler.common.enums.DbType;
+import org.apache.dolphinscheduler.common.task.dqs.rule.*;
 import org.apache.dolphinscheduler.common.utils.JSONUtils;
 import org.apache.dolphinscheduler.common.utils.ParameterUtils;
 import org.apache.dolphinscheduler.common.utils.StringUtils;
