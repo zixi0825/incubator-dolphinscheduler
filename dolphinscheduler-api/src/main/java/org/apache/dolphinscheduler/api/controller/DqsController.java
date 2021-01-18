@@ -187,7 +187,7 @@ public class DqsController extends BaseController {
     public Result queryRuleList() {
         Map<String, Object> result = new HashMap<>();
         result = dqsRuleService.queryAllRuleList();
-        return returnDataListPaging(result);
+        return returnDataList(result);
     }
     //获取规则类型模板列表
 

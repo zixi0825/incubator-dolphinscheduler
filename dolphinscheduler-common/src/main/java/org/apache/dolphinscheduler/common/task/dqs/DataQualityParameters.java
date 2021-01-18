@@ -16,9 +16,12 @@
  */
 package org.apache.dolphinscheduler.common.task.dqs;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.dolphinscheduler.common.process.ResourceInfo;
 import org.apache.dolphinscheduler.common.task.AbstractParameters;
 import org.apache.dolphinscheduler.common.task.spark.SparkParameters;
+import org.apache.dolphinscheduler.common.utils.JSONUtils;
+import org.apache.dolphinscheduler.common.utils.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -59,7 +62,12 @@ public class DataQualityParameters extends AbstractParameters {
 
     @Override
     public boolean checkParameters() {
-        return false;
+
+        return  (ruleId != 0
+                && StringUtils.isNotEmpty(ruleJson)
+                && MapUtils.isNotEmpty(ruleInputParameter)
+                && sparkParameters != null
+                );
     }
 
     @Override
@@ -74,4 +82,5 @@ public class DataQualityParameters extends AbstractParameters {
     public void setSparkParameters(SparkParameters sparkParameters) {
         this.sparkParameters = sparkParameters;
     }
+
 }

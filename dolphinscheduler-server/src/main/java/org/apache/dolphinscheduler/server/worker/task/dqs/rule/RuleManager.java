@@ -138,10 +138,10 @@ public class RuleManager {
     }
 
     public static void main(String[] args) throws Exception{
-//        testMultiTableAccuracy();
+        testMultiTableAccuracy();
 //        testMultiTableComparison();
 //        testSingleTable();
-        System.out.println(System.getProperty("user.dir")+ File.separator+"lib\\");
+//        System.out.println(System.getProperty("user.dir")+ File.separator+"lib\\");
 //        createFolder("hello");
     }
 
@@ -527,7 +527,7 @@ public class RuleManager {
         srcTable.setValueType(ValueType.STRING);
 
         RuleInputEntry srcFilter = new RuleInputEntry();
-        srcFilter.setTitle("源_数据过滤条件");
+        srcFilter.setTitle("源_过滤条件");
         srcFilter.setField("src_filter");
         srcFilter.setType(FormType.INPUT);
         srcFilter.setCanEdit(true);
@@ -573,7 +573,7 @@ public class RuleManager {
         targetTable.setValueType(ValueType.NUMBER);
 
         RuleInputEntry targetFilter = new RuleInputEntry();
-        targetFilter.setTitle("目标_数据过滤条件");
+        targetFilter.setTitle("目标_过滤条件");
         targetFilter.setField("target_filter");
         targetFilter.setType(FormType.INPUT);
         targetFilter.setCanEdit(true);
@@ -584,7 +584,7 @@ public class RuleManager {
         targetFilter.setValueType(ValueType.STRING);
 
         RuleInputEntry mappingColumns = new RuleInputEntry();
-        mappingColumns.setTitle("检查列名");
+        mappingColumns.setTitle("检查列");
         mappingColumns.setField("mapping_columns");
         mappingColumns.setType(FormType.INPUT);
         mappingColumns.setCanEdit(true);

@@ -108,6 +108,16 @@ public class SelectParam extends PluginParams {
             return this;
         }
 
+        public Builder setSize(String size){
+            if (this.props == null) {
+                this.setProps(new SelectParamsProps());
+            }
+
+            ((SelectParamsProps)this.props).setSize(size);
+            return this;
+        }
+
+
         @Override
         public SelectParam build() {
             return new SelectParam(this);

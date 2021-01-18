@@ -24,6 +24,7 @@ import org.apache.dolphinscheduler.common.enums.FormType;
 import org.apache.dolphinscheduler.common.form.ParamsOptions;
 import org.apache.dolphinscheduler.common.form.PluginParams;
 import org.apache.dolphinscheduler.common.form.Validate;
+import org.apache.dolphinscheduler.common.form.props.RadioParamsProps;
 
 /**
  * radio
@@ -89,6 +90,20 @@ public class RadioParam extends PluginParams {
             }
 
             this.paramsOptionsList.add(paramsOptions);
+            return this;
+        }
+
+        public Builder setProps(RadioParamsProps props) {
+            this.props = props;
+            return this;
+        }
+
+        public RadioParam.Builder setSize(String size){
+            if (this.props == null) {
+                this.setProps(new RadioParamsProps());
+            }
+
+            ((RadioParamsProps)this.props).setSize(size);
             return this;
         }
 

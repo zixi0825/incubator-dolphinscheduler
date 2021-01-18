@@ -85,6 +85,15 @@ public class InputParam extends PluginParams {
             return this;
         }
 
+        public InputParam.Builder setSize(String size){
+            if (this.props == null) {
+                this.setProps(new InputParamsProps());
+            }
+
+            ((InputParamsProps)this.props).setSize(size);
+            return this;
+        }
+
         @Override
         public InputParam build() {
             return new InputParam(this);

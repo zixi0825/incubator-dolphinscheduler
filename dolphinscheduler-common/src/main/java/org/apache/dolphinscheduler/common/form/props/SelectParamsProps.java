@@ -31,6 +31,8 @@ public class SelectParamsProps {
 
     private String placeholder;
 
+    private String size;
+
     @JsonProperty("multiple")
     public boolean getMultiple() {
         return multiple;
@@ -58,6 +60,16 @@ public class SelectParamsProps {
 
     public SelectParamsProps setDisabled(boolean disabled) {
         this.disabled = disabled;
+        return this;
+    }
+
+    @JsonProperty("size")
+    public String getSize() {
+        return size;
+    }
+
+    public SelectParamsProps setSize(String size) {
+        this.size = size;
         return this;
     }
 }

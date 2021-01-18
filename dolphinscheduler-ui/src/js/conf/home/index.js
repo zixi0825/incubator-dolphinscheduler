@@ -20,6 +20,7 @@
 import 'babel-polyfill'
 import Vue from 'vue'
 import ElementUI from 'element-ui'
+import formCreate from "@form-create/element-ui"
 import locale from 'element-ui/lib/locale/lang/en'
 import 'element-ui/lib/theme-chalk/index.css'
 import App from './App'
@@ -46,6 +47,8 @@ i18n.globalScope.LOCALE === 'en_US' ? Vue.use(ElementUI, { locale }) : Vue.use(E
 
 // Vue.use(ans)
 Vue.use(useOpt)
+
+Vue.use(formCreate);
 
 sync(store, router)
 

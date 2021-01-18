@@ -155,6 +155,15 @@ public class CascaderParam extends PluginParams {
             return this;
         }
 
+        public Builder setSize(String size){
+            if (this.props == null) {
+                this.setProps(new CascaderParamsProps());
+            }
+
+            ((CascaderParamsProps)this.props).setSize(size);
+            return this;
+        }
+
         @Override
         public CascaderParam build() {
             return new CascaderParam(this);

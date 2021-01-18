@@ -33,7 +33,19 @@ public class CascaderParamsProps {
 
     private boolean changeOnSelect;
 
-    @JsonProperty("data")
+    private String size;
+
+    @JsonProperty("size")
+    public String getSize() {
+        return size;
+    }
+
+    public CascaderParamsProps setSize(String size) {
+        this.size = size;
+        return this;
+    }
+
+    @JsonProperty("options")
     public List<CascaderParamsOptions> getOptions() {
         return options;
     }

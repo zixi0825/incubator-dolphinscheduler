@@ -19,6 +19,9 @@ package org.apache.dolphinscheduler.api.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.dolphinscheduler.api.enums.Status;
 import org.apache.dolphinscheduler.api.service.BaseService;
 import org.apache.dolphinscheduler.api.service.DqsRuleService;
@@ -191,7 +194,7 @@ public class DqsRuleServiceImpl extends BaseService  implements DqsRuleService {
         return result;
     }
 
-    private List<PluginParams> getRuleFormCreateJson(RuleDefinition ruleDefinition){
+    private String getRuleFormCreateJson(RuleDefinition ruleDefinition){
         List<RuleInputEntry> allInputEntryList = new ArrayList<>(ruleDefinition.getRuleInputEntryList());
         if(ComparisonValueType.CALCULATE_VALUE == ruleDefinition.getComparisonValueType()){
             CalculateComparisonValueParameter calculateComparisonValueParameter =
@@ -222,6 +225,7 @@ public class DqsRuleServiceImpl extends BaseService  implements DqsRuleService {
                                                              .build())
                                         .setProps(new InputParamsProps().setDisabled(!inputEntry.getCanEdit()))
                                         .setValue(inputEntry.getValue())
+                                        .setSize("small")
                                         .build();
                         params.add(inputParam);
                         break;
@@ -238,6 +242,7 @@ public class DqsRuleServiceImpl extends BaseService  implements DqsRuleService {
                         SelectParam selectParam = SelectParam
                                 .newBuilder(inputEntry.getField(),inputEntry.getTitle())
                                 .setParamsOptionsList(options)
+                                .setSize("small")
                                 .build();
                         params.add(selectParam);
                         break;
@@ -276,6 +281,7 @@ public class DqsRuleServiceImpl extends BaseService  implements DqsRuleService {
                         CascaderParam cascaderParam = CascaderParam
                                 .newBuilder(inputEntry.getField(),inputEntry.getTitle())
                                 .setParamsOptionsList(cascaderOptions)
+                                .setSize("small")
                                 .build();
                         params.add(cascaderParam);
                         break;
@@ -285,6 +291,17 @@ public class DqsRuleServiceImpl extends BaseService  implements DqsRuleService {
             }
         }
 
-        return params;
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL); //属性为NULL不序列化
+        String result = null;
+
+        try {
+            result = mapper.writeValueAsString(params);
+        }catch (JsonProcessingException e){
+            e.printStackTrace();
+        }
+
+
+        return result;
     }
 }

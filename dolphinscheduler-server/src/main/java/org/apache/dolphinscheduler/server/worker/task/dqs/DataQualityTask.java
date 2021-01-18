@@ -61,7 +61,7 @@ public class DataQualityTask extends AbstractYarnTask {
 
     @Override
     public void init() throws Exception {
-        logger.info("data quality task params {}", taskExecutionContext.getTaskParams());
+        logger.info(" data quality task params {}", taskExecutionContext.getTaskParams());
 
         dataQualityParameters = JSONUtils.parseObject(taskExecutionContext.getTaskParams(), DataQualityParameters.class);
 
@@ -78,9 +78,14 @@ public class DataQualityTask extends AbstractYarnTask {
             throw new RuntimeException("rule json is null");
         }
 
+        Map<String,String> inputParameter = dataQualityParameters.getRuleInputParameter();
+        for(Map.Entry<String,String> entry: inputParameter.entrySet()){
+            entry.setValue(entry.getValue().trim());
+        }
+
         RuleManager ruleManager = new RuleManager(
                 dataQualityParameters.getRuleJson(),
-                dataQualityParameters.getRuleInputParameter(),
+                inputParameter,
                 taskExecutionContext.getDataQualityTaskExecutionContext());
 
         DataQualityConfiguration dataQualityConfiguration =
@@ -128,7 +133,7 @@ public class DataQualityTask extends AbstractYarnTask {
     @Override
     protected void setMainJarName() {
         ResourceInfo mainJar = new ResourceInfo();
-        mainJar.setRes(System.getProperty("user.dir")+ File.separator+"lib"+File.separator+CommonUtils.getDqsJarName());
+        mainJar.setRes(System.getProperty("user.dir") + File.separator + "lib" + File.separator + CommonUtils.getDqsJarName());
         dataQualityParameters.getSparkParameters().setMainJar(mainJar);
     }
 
@@ -138,7 +143,6 @@ public class DataQualityTask extends AbstractYarnTask {
     }
 
     private String replaceDoubleBrackets(String mainParameter){
-
         mainParameter = mainParameter
                 .replace(Constants.DOUBLE_BRACKETS_LEFT,Constants.DOUBLE_BRACKETS_LEFT_SPACE)
                 .replace(Constants.DOUBLE_BRACKETS_RIGHT,Constants.DOUBLE_BRACKETS_RIGHT_SPACE);
@@ -147,6 +151,6 @@ public class DataQualityTask extends AbstractYarnTask {
         }else{
             return  mainParameter;
         }
-
     }
+
 }

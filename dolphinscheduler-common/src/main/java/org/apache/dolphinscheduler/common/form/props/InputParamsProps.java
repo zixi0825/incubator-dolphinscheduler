@@ -33,6 +33,18 @@ public class InputParamsProps {
 
     private boolean disabled;
 
+    private String size;
+
+    @JsonProperty("size")
+    public String getSize() {
+        return size;
+    }
+
+    public InputParamsProps setSize(String size) {
+        this.size = size;
+        return this;
+    }
+
     @JsonProperty("type")
     public PropsType getPropsType() {
         return propsType;

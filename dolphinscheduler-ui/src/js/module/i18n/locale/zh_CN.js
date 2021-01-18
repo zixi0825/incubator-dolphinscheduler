@@ -556,6 +556,7 @@ export default {
   'Please enter the correct IP': '请输入正确的IP',
   'Please generate token': '请生成Token',
   'Spark Version': 'Spark版本',
+  'Rule Name': '规则名称',
   TargetDataBase: '目标库',
   TargetTable: '目标表',
   'Please enter the table of target': '请输入目标表名',

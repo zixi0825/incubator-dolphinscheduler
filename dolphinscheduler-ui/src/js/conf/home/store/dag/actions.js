@@ -847,5 +847,33 @@ export default {
         reject(e)
       })
     })
+  },
+
+  /**
+   * 
+   */
+  getRuleInputEntryList ({ state }, payload) {
+    return new Promise((resolve, reject) => {
+      io.get('dqs/getRuleFormCreateJson', {
+        ruleId: payload
+      }, res => {
+        resolve(res)
+      }).catch(res => {
+        reject(res)
+      })
+    })
+  },
+/**
+   * 
+   */
+  getRuleList ({ state }, payload) {
+    return new Promise((resolve, reject) => {
+      io.get('dqs/ruleList', {}, res => {
+        resolve(res)
+      }).catch(res => {
+        reject(res)
+      })
+    })
   }
+
 }
