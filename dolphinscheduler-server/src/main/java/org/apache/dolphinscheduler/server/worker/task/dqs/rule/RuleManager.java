@@ -39,12 +39,12 @@ import static org.apache.dolphinscheduler.common.Constants.*;
  */
 public class RuleManager {
 
-    private String ruleJson;
+    private RuleDefinition ruleDefinition;
     private Map<String,String> inputParameterValue;
     private DataQualityTaskExecutionContext dataQualityTaskExecutionContext;
 
     public static final String  CALCULATE_COMPARISON_WRITER_SQL = "SELECT ${rule_type} as rule_type," +
-            "${task_id} as task_id," +
+            "${process_defined_id} as process_defined_id," +
             "${task_instance_id} as task_instance_id," +
             "${statistics_name} AS statistics_value, " +
             "${comparison_name} AS comparison_value," +
@@ -55,7 +55,7 @@ public class RuleManager {
             "from ${statistics_table} FULL JOIN ${comparison_table}";
 
     public static final String  FIXED_COMPARISON_WRITER_SQL = "SELECT ${rule_type} as rule_type," +
-            "${task_id} as task_id," +
+            "${process_defined_id} as process_defined_id," +
             "${task_instance_id} as task_instance_id," +
             "${statistics_name} AS statistics_value, " +
             "${comparison_name} AS comparison_value," +
@@ -66,7 +66,7 @@ public class RuleManager {
             "from ${statistics_table}";
 
     public static final String MULTI_TABLE_COMPARISON_SQL = "SELECT ${rule_type} as rule_type," +
-            "${task_id} as task_id," +
+            "${process_defined_id} as process_defined_id," +
             "${task_instance_id} as task_instance_id," +
             "${statistics_name} AS statistics_value, " +
             "${comparison_name} AS comparison_value," +
@@ -78,8 +78,8 @@ public class RuleManager {
             "join "+
             "( ${comparison_execute_sql} ) tmp2 ";
 
-    public RuleManager(String ruleJson, Map<String,String> inputParameterValue, DataQualityTaskExecutionContext dataQualityTaskExecutionContext){
-        this.ruleJson = ruleJson;
+    public RuleManager(RuleDefinition ruleDefinition, Map<String,String> inputParameterValue, DataQualityTaskExecutionContext dataQualityTaskExecutionContext){
+        this.ruleDefinition = ruleDefinition;
         this.inputParameterValue = inputParameterValue;
         this.dataQualityTaskExecutionContext = dataQualityTaskExecutionContext;
     }
@@ -105,8 +105,7 @@ public class RuleManager {
          *
          */
         //根据ruleType
-        RuleDefinition ruleDefinition = JSONUtils.parseObject(ruleJson,RuleDefinition.class);
-        System.out.println(ruleJson);
+
 
         if(ruleDefinition == null){
             return null;
@@ -131,16 +130,16 @@ public class RuleManager {
                 ruleParser = new MultiTableComparisonRuleParser();
                 break;
             default:
-                throw  new Exception("rule type is not support");
+                throw new Exception("rule type is not support");
         }
 
         return ruleParser.parse(ruleDefinition,inputParameterValueResult,dataQualityTaskExecutionContext);
     }
 
     public static void main(String[] args) throws Exception{
-        testMultiTableAccuracy();
+//        testMultiTableAccuracy();
 //        testMultiTableComparison();
-//        testSingleTable();
+        testSingleTable();
 //        System.out.println(System.getProperty("user.dir")+ File.separator+"lib\\");
 //        createFolder("hello");
     }
@@ -234,7 +233,7 @@ public class RuleManager {
         List<ExecuteSqlDefinition> statisticsExecuteSqlList = new ArrayList<>();
         ExecuteSqlDefinition executeSqlDefinition2 = new ExecuteSqlDefinition();
         executeSqlDefinition2.setIndex(0);
-        executeSqlDefinition2.setSql("SELECT count(*) AS miss FROM ${src_table} WHERE (${src_field} is null) AND (${src_filter}) ");
+        executeSqlDefinition2.setSql("SELECT count(*) AS miss FROM ${src_table} WHERE (${src_field} is null or ${src_field} = '') AND (${src_filter}) ");
         executeSqlDefinition2.setTableAlias("miss_items");
         statisticsExecuteSqlList.add(executeSqlDefinition2);
         ruleDefinition.setStatisticsExecuteSqlList(statisticsExecuteSqlList);
@@ -258,6 +257,7 @@ public class RuleManager {
         comparisonTitle.setType(FormType.INPUT);
         comparisonTitle.setCanEdit(false);
         comparisonTitle.setShow(true);
+        comparisonTitle.setValue("表总行数");
         comparisonTitle.setPlaceholder("${comparison_title}");
         comparisonTitle.setInputType(InputType.COMPARISON);
         comparisonTitle.setValueType(ValueType.STRING);
@@ -267,7 +267,7 @@ public class RuleManager {
         comparisonValue.setField("comparison_value");
         comparisonValue.setType(FormType.INPUT);
         comparisonValue.setCanEdit(false);
-        comparisonValue.setShow(true);
+        comparisonValue.setShow(false);
         comparisonValue.setPlaceholder("${comparison_value}");
         comparisonValue.setInputType(InputType.COMPARISON);
         comparisonValue.setValueType(ValueType.NUMBER);
@@ -299,7 +299,7 @@ public class RuleManager {
         inputParameterValue.put("src_field","id");
 
         inputParameterValue.put("rule_type","1");
-        inputParameterValue.put("task_id","1");
+        inputParameterValue.put("process_defined_id","1");
         inputParameterValue.put("task_instance_id","1");
         inputParameterValue.put("check_type","1");
         inputParameterValue.put("threshold","1");
@@ -322,7 +322,8 @@ public class RuleManager {
         dataQualityTaskExecutionContext.setWriterTable("dqs_result");
         dataQualityTaskExecutionContext.setSourceConnectionParams("{\"address\":\"jdbc:mysql://localhost:3306\",\"database\":\"test\",\"jdbcUrl\":\"jdbc:mysql://localhost:3306/test\",\"user\":\"test\",\"password\":\"test\",\"other\":\"autoReconnect=true\"}");
 
-        RuleManager ruleManager = new RuleManager(JSONUtils.toJsonString(ruleDefinition),inputParameterValue,dataQualityTaskExecutionContext);
+        System.out.println(JSONUtils.toJsonString(ruleDefinition));
+        RuleManager ruleManager = new RuleManager(ruleDefinition,inputParameterValue,dataQualityTaskExecutionContext);
         System.out.println(JSONUtils.toJsonString(ruleManager.generateDataQualityParameter()));
 
     }
@@ -456,7 +457,7 @@ public class RuleManager {
         inputParameterValue.put("comparison_execute_sql","select count(1) as count2 from default.test1_1");
 
         inputParameterValue.put("rule_type","1");
-        inputParameterValue.put("task_id","1");
+        inputParameterValue.put("process_defined_id","1");
         inputParameterValue.put("task_instance_id","1");
         inputParameterValue.put("check_type","1");
         inputParameterValue.put("threshold","1");
@@ -479,7 +480,7 @@ public class RuleManager {
         dataQualityTaskExecutionContext.setWriterTable("dqs_result");
         dataQualityTaskExecutionContext.setSourceConnectionParams("{\"address\":\"jdbc:mysql://localhost:3306\",\"database\":\"test\",\"jdbcUrl\":\"jdbc:mysql://localhost:3306/test\",\"user\":\"test\",\"password\":\"test\",\"other\":\"autoReconnect=true\"}");
 
-        RuleManager ruleManager = new RuleManager(JSONUtils.toJsonString(ruleDefinition),inputParameterValue,dataQualityTaskExecutionContext);
+        RuleManager ruleManager = new RuleManager(ruleDefinition,inputParameterValue,dataQualityTaskExecutionContext);
         System.out.println(JSONUtils.toJsonString(ruleManager.generateDataQualityParameter()));
     }
 
@@ -698,7 +699,7 @@ public class RuleManager {
         inputParameterValue.put("mapping_columns","id,company");
 
         inputParameterValue.put("rule_type","1");
-        inputParameterValue.put("task_id","1");
+        inputParameterValue.put("process_defined_id","1");
         inputParameterValue.put("task_instance_id","1");
         inputParameterValue.put("check_type","1");
         inputParameterValue.put("threshold","111");
@@ -721,7 +722,8 @@ public class RuleManager {
         dataQualityTaskExecutionContext.setWriterTable("dqs_result");
         dataQualityTaskExecutionContext.setSourceConnectionParams("{\"address\":\"jdbc:mysql://localhost:3306\",\"database\":\"test\",\"jdbcUrl\":\"jdbc:mysql://localhost:3306/test\",\"user\":\"test\",\"password\":\"test\",\"other\":\"autoReconnect=true\"}");
 
-        RuleManager ruleManager = new RuleManager(JSONUtils.toJsonString(ruleDefinition),inputParameterValue,dataQualityTaskExecutionContext);
+        System.out.println(JSONUtils.toJsonString(ruleDefinition));
+        RuleManager ruleManager = new RuleManager(ruleDefinition,inputParameterValue,dataQualityTaskExecutionContext);
         System.out.println(JSONUtils.toJsonString(ruleManager.generateDataQualityParameter()));
     }
 }

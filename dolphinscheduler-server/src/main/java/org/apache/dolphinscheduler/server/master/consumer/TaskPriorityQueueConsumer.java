@@ -59,6 +59,7 @@ import org.apache.dolphinscheduler.service.process.ProcessService;
 import org.apache.dolphinscheduler.service.queue.TaskPriority;
 import org.apache.dolphinscheduler.service.queue.TaskPriorityQueue;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -366,17 +367,26 @@ public class TaskPriorityQueueConsumer extends Thread {
         if(StringUtils.isNotEmpty(config.get(Constants.TARGET_DATASOURCE_ID))){
             DataSource dataSource = processService.findDataSourceById(Integer.valueOf(config.get(Constants.TARGET_DATASOURCE_ID)));
             if(dataSource != null){
-                dataQualityTaskExecutionContext.setSourceConnectorType(config.get(Constants.TARGET_CONNECTOR_TYPE));
-                dataQualityTaskExecutionContext.setDataSourceId(dataSource.getId());
-                dataQualityTaskExecutionContext.setSourceType(dataSource.getType().getCode());
-                dataQualityTaskExecutionContext.setSourceConnectionParams(dataSource.getConnectionParams());
+                dataQualityTaskExecutionContext.setTargetConnectorType(config.get(Constants.TARGET_CONNECTOR_TYPE));
+                dataQualityTaskExecutionContext.setDataTargetId(dataSource.getId());
+                dataQualityTaskExecutionContext.setTargetType(dataSource.getType().getCode());
+                dataQualityTaskExecutionContext.setTargetConnectionParams(dataSource.getConnectionParams());
             }
         }
 
         MySQLDataSource mySqlDataSource = new MySQLDataSource();
         mySqlDataSource.setUser(springConnectionFactory.dataSource().getUsername());
         mySqlDataSource.setPassword(springConnectionFactory.dataSource().getPassword());
-        mySqlDataSource.setAddress(springConnectionFactory.dataSource().getUrl());
+
+        String url = springConnectionFactory.dataSource().getUrl();
+        String cleanUri = url.substring(5);
+        URI uri = URI.create(cleanUri);
+        mySqlDataSource.setAddress("jdbc:"+uri.getScheme()+"://"+uri.getHost()+":"+uri.getPort());
+        mySqlDataSource.setDatabase(uri.getPath().substring(1));
+        String[] result = url.split("\\?");
+        if(result.length >=2){
+            mySqlDataSource.setOther(result[1]);
+        }
 
         dataQualityTaskExecutionContext.setWriterConnectorType("JDBC");
         dataQualityTaskExecutionContext.setWriterConnectionParams(JSONUtils.toJsonString(mySqlDataSource));
@@ -484,4 +494,5 @@ public class TaskPriorityQueueConsumer extends Thread {
 
         return resourcesMap;
     }
+
 }

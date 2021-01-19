@@ -58,8 +58,10 @@ public class DataQualityApplication {
         }
 
         SparkConf conf = new SparkConf().setAppName(dataQualityConfiguration.getName());
-        for(Map.Entry<String,String> entry: dataQualityConfiguration.getSparkParameter().getConfig().entrySet()){
-            conf.set(entry.getKey(), entry.getValue());
+        if(dataQualityConfiguration.getSparkParameter().getConfig() != null){
+            for(Map.Entry<String,String> entry: dataQualityConfiguration.getSparkParameter().getConfig().entrySet()){
+                conf.set(entry.getKey(), entry.getValue());
+            }
         }
 
         conf.set("spark.sql.crossJoin.enabled", "true");

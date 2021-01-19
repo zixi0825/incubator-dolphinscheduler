@@ -207,8 +207,8 @@ public class RuleParserUtils {
         List<WriterParameter> writerParameterList = new ArrayList<>();
 
         if(StringUtils.isNotEmpty(dataQualityTaskExecutionContext.getSourceConnectorType())){
-            BaseDataSource writerDataSource = DataSourceFactory.getDatasource(DbType.of(dataQualityTaskExecutionContext.getSourceType()),
-                    dataQualityTaskExecutionContext.getSourceConnectionParams());
+            BaseDataSource writerDataSource = DataSourceFactory.getDatasource(DbType.of(dataQualityTaskExecutionContext.getWriterType()),
+                    dataQualityTaskExecutionContext.getWriterConnectionParams());
             WriterParameter writerParameter = new WriterParameter();
             writerParameter.setType(dataQualityTaskExecutionContext.getWriterConnectorType());
             Map<String,Object> config = new HashMap<>();

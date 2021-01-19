@@ -16,12 +16,14 @@
  */
 package org.apache.dolphinscheduler.server.worker.task.dqs;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.dolphinscheduler.common.Constants;
 import org.apache.dolphinscheduler.common.enums.CommandType;
 import org.apache.dolphinscheduler.common.process.Property;
 import org.apache.dolphinscheduler.common.process.ResourceInfo;
 import org.apache.dolphinscheduler.common.task.AbstractParameters;
 import org.apache.dolphinscheduler.common.task.dqs.DataQualityParameters;
+import org.apache.dolphinscheduler.common.task.dqs.rule.RuleDefinition;
 import org.apache.dolphinscheduler.common.utils.CommonUtils;
 import org.apache.dolphinscheduler.common.utils.JSONUtils;
 import org.apache.dolphinscheduler.common.utils.ParameterUtils;
@@ -34,6 +36,8 @@ import org.apache.dolphinscheduler.server.worker.task.dqs.rule.RuleManager;
 import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parameter.DataQualityConfiguration;
 import org.slf4j.Logger;
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +50,7 @@ public class DataQualityTask extends AbstractYarnTask {
     /**
      * spark2 command
      */
-    private static final String SPARK2_COMMAND = "${SPARK_HOME2}/bin/spark-submit";
+    private static final String SPARK2_COMMAND = "${SPARK_HOME2}/bin/spark2-submit";
 
     private DataQualityParameters dataQualityParameters;
     /**
@@ -83,8 +87,22 @@ public class DataQualityTask extends AbstractYarnTask {
             entry.setValue(entry.getValue().trim());
         }
 
+        RuleDefinition ruleDefinition = JSONUtils.parseObject(dataQualityParameters.getRuleJson(),RuleDefinition.class);
+
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime time = LocalDateTime.now();
+        String now = df.format(time);
+
+        inputParameter.put("rule_type",ruleDefinition.getRuleType().getCode()+"");
+        inputParameter.put("create_time","'"+now+"'");
+        inputParameter.put("update_time","'"+now+"'");
+        inputParameter.put("threshold","1000");
+        inputParameter.put("process_defined_id",taskExecutionContext.getTaskAppId().split("_")[0]);
+        inputParameter.put("task_instance_id",taskExecutionContext.getTaskInstanceId()+"");
+        inputParameter.put("check_type","1");
+
         RuleManager ruleManager = new RuleManager(
-                dataQualityParameters.getRuleJson(),
+                ruleDefinition,
                 inputParameter,
                 taskExecutionContext.getDataQualityTaskExecutionContext());
 
@@ -93,7 +111,7 @@ public class DataQualityTask extends AbstractYarnTask {
 
         dataQualityParameters
                 .getSparkParameters()
-                .setMainArgs(replaceDoubleBrackets(JSONUtils.toJsonString(dataQualityConfiguration)));
+                .setMainArgs("\""+replaceDoubleBrackets(StringEscapeUtils.escapeJava(JSONUtils.toJsonString(dataQualityConfiguration)))+"\"");
 
         dataQualityParameters
                 .getSparkParameters()
@@ -153,4 +171,10 @@ public class DataQualityTask extends AbstractYarnTask {
         }
     }
 
+    public static void main(String[] args) {
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime time = LocalDateTime.now();
+        String now = df.format(time);
+        System.out.println("\""+now+"\"");
+    }
 }

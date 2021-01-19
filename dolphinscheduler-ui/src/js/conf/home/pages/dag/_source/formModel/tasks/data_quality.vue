@@ -136,8 +136,6 @@
     name: 'data_quality',
     data () {
       return {
-        valueConsistsOf: 'LEAF_PRIORITY',
-        
         // Deployment method
         deployMode: 'cluster',
         // Custom function
@@ -155,41 +153,26 @@
         // Other parameters
         others: '',
         // Program type
-        ruleId: '',
-        // Program type(List)
+        ruleId: 0,
+        // ruleNameList
         ruleNameList: [],
-
+      
         ruleMap:{},
 
         sparkParam:{},
+
+        ruleJson:{},
+
+        inputEntryValueMap:{},
        
         normalizer (node) {
           return {
             label: node.name
           }
         },
-        rule:[
-          {
-              field: "src_connector_type",
-              type: "select",
-              title: "src_connector_type",
-              options: [
-                  {
-                      "label": "JDBC",
-                      "value": "JDBC",
-                      "disabled": false
-                  },
-                  {
-                      "label": "HIVE",
-                      "value": "HIVE",
-                      "disabled": false
-                  }
-              ]
-          }
-        ],
+        rule:[],
         fApi: {},
         option: {
-          // 显示重置表单按扭
           resetBtn: false,
           submitBtn: false,
           row:{
@@ -210,18 +193,19 @@
         this._getRuluInputEntryList(o)
       },
       /**
-       * Get the corresponding datasource data according to type
+       * Get the rule input entry list
        */
       _getRuluInputEntryList(ruleId) {
         return new Promise((resolve, reject) => {
           this.store.dispatch('dag/getRuleInputEntryList',ruleId).then(res => {
+              //这里需要空值判断
               this.rule = JSON.parse(res.data)
           })
         })
       },
 
       /**
-       * Get the corresponding datasource data according to type
+       * Get rule list
        */
       _getRuluList () {
         return new Promise((resolve, reject) => {
@@ -230,15 +214,27 @@
               this.ruleNameList = new Array();
               this.ruleMap = new Map()
               res.data.forEach((item,i) => {
-                var obj = new Object(); //集合对象
-                obj.label=item.name //对象属性
+                var obj = new Object(); 
+                obj.label=item.name 
                 obj.value=item.id
-                this.ruleNameList.push(obj); //对象放入集合
+                this.ruleNameList.push(obj); 
                 this.ruleMap.set(item.id,item.ruleJson)
               })
 
-              this.ruleId = this.ruleNameList[0].value
-              this._getRuluInputEntryList(this.ruleId)  
+              if(this.ruleId === 0){
+                  this.ruleId = this.ruleNameList[0].value
+                  this._getRuluInputEntryList(this.ruleId)
+              }else{
+                  this._getRuluInputEntryList(this.ruleId)
+                  window.setTimeout(() => {
+                  var fields = this.fApi.fields();
+                  fields.forEach(item =>{
+                      console.log(item)
+                      console.log(this.inputEntryValueMap[item])
+                      this.fApi.setValue(item,this.inputEntryValueMap[item])
+                    })
+                  }, 1000);
+              }
           })
         })
       },
@@ -305,66 +301,86 @@
           others: this.others,
         }
 
-        var formData = this.fApi.formData();
+        this.inputEntryValueMap = this.fApi.formData();
 
-        if(formData.src_datasource_id){
-            formData.src_datasource_id = formData.src_datasource_id[1]
+        if(this.inputEntryValueMap.src_datasource_id && this._isArrayFn(this.inputEntryValueMap.src_datasource_id)){
+            this.inputEntryValueMap.src_datasource_id 
+                    = this.inputEntryValueMap.src_datasource_id[1]
         }
 
-        if(formData.target_datasource_id){
-            formData.target_datasource_id = formData.target_datasource_id[1]
+        if(this.inputEntryValueMap.target_datasource_id && this._isArrayFn(this.inputEntryValueMap.target_datasource_id)){
+            this.inputEntryValueMap.target_datasource_id 
+                  = this.inputEntryValueMap.target_datasource_id[1]
         }
+
+        this.ruleJson = this.ruleMap.get(this.ruleId);
+
+        var fields = this.fApi.fields();
+          fields.forEach(item =>{
+            console.log(item)
+            console.log(this.inputEntryValueMap[item])
+            this.fApi.setValue(item,this.inputEntryValueMap[item])
+          })
 
         // storage
         this.$emit('on-params', {
           ruleId: this.ruleId,
           sparkParameters: this.sparkParam,
-          ruleJson:this.ruleMap.get(this.ruleId),
-          ruleInputParameter:formData
+          ruleJson:this.ruleJson,
+          ruleInputParameter:this.inputEntryValueMap
         })
         return true
+      },
+
+      _isArrayFn (o) {
+        return Object.prototype.toString.call(o) === '[object Array]';
       }
     },
+
     watch: {
       // Watch the cacheParams
       cacheParams (val) {
         this.$emit('on-cache-params', val)
       },
     },
+
     computed: {
+      
       cacheParams () {
         return {
-          // ruleId: this.ruleId,
-          // sparkParameters: this.sparkParam,
-          // ruleJson:this.ruleMap.get(this.ruleId),
-          // ruleInputParameter:this.fApi.formData()
+          ruleId: this.ruleId,
+          sparkParameters: this.sparkParam,
+          ruleJson:this.ruleJson,
+          ruleInputParameter:this.inputEntryValueMap
         }
       }
     },
 
     created () {
       let o = this.backfillItem
-      console.log(o.params.sparkParameters)
+
       // Non-null objects represent backfill
-      // if (!_.isEmpty(o)) { 
-      //   this.deployMode = o.params.sparkParameters.deployMode || ''
-      //   this.driverCores = o.params.sparkParameters.driverCores || 1
-      //   this.driverMemory = o.params.sparkParameters.driverMemory || '512M'
-      //   this.numExecutors = o.params.sparkParameters.numExecutors || 2
-      //   this.executorMemory = o.params.sparkParameters.executorMemory || '2G'
-      //   this.executorCores = o.params.sparkParameters.executorCores || 2
-      //   this.others = o.params.sparkParameters.others
-      //   this.ruleId = o.params.ruleId || 1
-      //   // backfill localParams
-      //   let localParams = o.params.sparkParameters.localParams || []
-      //   if (localParams.length) {
-      //     this.localParams = localParams
-      //   }
-      // }
+      if (!_.isEmpty(o)) { 
+        this.deployMode = o.params.sparkParameters.deployMode || ''
+        this.driverCores = o.params.sparkParameters.driverCores || 1
+        this.driverMemory = o.params.sparkParameters.driverMemory || '512M'
+        this.numExecutors = o.params.sparkParameters.numExecutors || 2
+        this.executorMemory = o.params.sparkParameters.executorMemory || '2G'
+        this.executorCores = o.params.sparkParameters.executorCores || 2
+        this.others = o.params.sparkParameters.others
+        this.ruleId = o.params.ruleId || 0
+        // backfill localParams
+        let localParams = o.params.sparkParameters.localParams || []
+        if (localParams.length) {
+          this.localParams = localParams
+        }
+
+        this.ruleJson = o.params.ruleJson
+        this.inputEntryValueMap = o.params.ruleInputParameter 
+      }
     },
 
     mounted () {
-        // this._getRuluInputEntryList()
         this._getRuluList()
     },
 
@@ -375,6 +391,7 @@
        
   }
 </script>
+
 <style lang="scss" rel="stylesheet/scss">
   .form-box{
     margin-left: 13px;
