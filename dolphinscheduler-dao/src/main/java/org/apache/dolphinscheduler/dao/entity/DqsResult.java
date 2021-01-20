@@ -33,8 +33,8 @@ public class DqsResult {
     /**
      * task_id
      */
-    @TableField(value = "task_id")
-    private long taskId;
+    @TableField(value = "process_defined_id")
+    private long processDefinedId;
     /**
      * task_instance_id
      */
@@ -89,12 +89,12 @@ public class DqsResult {
         this.id = id;
     }
 
-    public long getTaskId() {
-        return taskId;
+    public long getProcessDefinedId() {
+        return processDefinedId;
     }
 
-    public void setTaskId(long taskId) {
-        this.taskId = taskId;
+    public void setProcessDefinedId(long processDefinedId) {
+        this.processDefinedId = processDefinedId;
     }
 
     public long getTaskInstanceId() {
@@ -183,7 +183,7 @@ public class DqsResult {
         if (id != that.id) {
             return false;
         }
-        if (taskId != that.taskId) {
+        if (processDefinedId != that.processDefinedId) {
             return false;
         }
         if (taskInstanceId != that.taskInstanceId) {
@@ -220,7 +220,7 @@ public class DqsResult {
     public String toString() {
         return "DqsResult{" +
                 "id=" + id +
-                ", taskId=" + taskId +
+                ", processDefinedId=" + processDefinedId +
                 ", taskInstanceId='" + taskInstanceId + '\'' +
                 ", ruleType='" + ruleType + '\'' +
                 ", statisticsValue=" + statisticsValue +

@@ -249,9 +249,7 @@ public class RuleParserUtils {
 
         return srcColumnNotNull
                 + AND
-                + targetColumnIsNull
-                + (StringUtils.isEmpty(inputParameterValueResult.get(SRC_FILTER))? "" : AND + inputParameterValueResult.get(SRC_FILTER))
-                + (StringUtils.isEmpty(inputParameterValueResult.get(TARGET_FILTER))? "" : AND + inputParameterValueResult.get(TARGET_FILTER));
+                + targetColumnIsNull;
     }
 
     public static List<WriterParameter> getWriterParameterList(

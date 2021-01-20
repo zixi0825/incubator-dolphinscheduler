@@ -137,9 +137,9 @@ public class RuleManager {
     }
 
     public static void main(String[] args) throws Exception{
-//        testMultiTableAccuracy();
+        testMultiTableAccuracy();
 //        testMultiTableComparison();
-        testSingleTable();
+//        testSingleTable();
 //        System.out.println(System.getProperty("user.dir")+ File.separator+"lib\\");
 //        createFolder("hello");
     }
@@ -690,12 +690,12 @@ public class RuleManager {
         inputParameterValue.put("src_connector_type","JDBC");
         inputParameterValue.put("src_datasource_id","1");
         inputParameterValue.put("src_table","test1");
-        inputParameterValue.put("src_filter","");
+        inputParameterValue.put("src_filter","a=0");
 
         inputParameterValue.put("target_connector_type","HIVE");
         inputParameterValue.put("target_datasource_id","1");
         inputParameterValue.put("target_table","test1_1");
-        inputParameterValue.put("target_filter","");
+        inputParameterValue.put("target_filter","b=1");
         inputParameterValue.put("mapping_columns","id,company");
 
         inputParameterValue.put("rule_type","1");
