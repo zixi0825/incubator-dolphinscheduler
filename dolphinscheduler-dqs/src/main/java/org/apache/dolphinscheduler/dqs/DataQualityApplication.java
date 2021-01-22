@@ -16,7 +16,6 @@
  */
 package org.apache.dolphinscheduler.dqs;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.dolphinscheduler.dqs.configuration.DataQualityConfiguration;
 import org.apache.dolphinscheduler.dqs.context.DataQualityContext;
 import org.apache.dolphinscheduler.dqs.flow.DataQualityTask;
@@ -28,8 +27,6 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.sql.SparkSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

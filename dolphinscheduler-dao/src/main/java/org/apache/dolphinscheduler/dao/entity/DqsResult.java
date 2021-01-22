@@ -71,6 +71,11 @@ public class DqsResult {
     @TableField(value = "operator")
     private int operator;
     /**
+     * operator
+     */
+    @TableField(value = "failure_strategy")
+    private int failureStrategy;
+    /**
      * create_time
      */
     @TableField(value = "create_time")
@@ -153,6 +158,14 @@ public class DqsResult {
         this.operator = operator;
     }
 
+    public int getFailureStrategy() {
+        return failureStrategy;
+    }
+
+    public void setFailureStrategy(int failureStrategy) {
+        this.failureStrategy = failureStrategy;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -207,6 +220,9 @@ public class DqsResult {
         if (operator != that.operator) {
             return false;
         }
+        if (failureStrategy != that.failureStrategy) {
+            return false;
+        }
         if (createTime != null && !createTime.equals(that.createTime)) {
             return false;
         }
@@ -228,6 +244,7 @@ public class DqsResult {
                 ", checkType='" + checkType + '\'' +
                 ", threshold='" + threshold + '\'' +
                 ", operator=" + operator +
+                ", failureStrategy=" + failureStrategy +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 '}';

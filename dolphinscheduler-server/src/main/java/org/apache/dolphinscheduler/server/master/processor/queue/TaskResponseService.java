@@ -17,14 +17,16 @@
 
 package org.apache.dolphinscheduler.server.master.processor.queue;
 
-import org.apache.dolphinscheduler.common.enums.Event;
-import org.apache.dolphinscheduler.common.enums.ExecutionStatus;
+import org.apache.dolphinscheduler.common.enums.*;
 import org.apache.dolphinscheduler.common.thread.Stopper;
+import org.apache.dolphinscheduler.common.utils.JSONUtils;
+import org.apache.dolphinscheduler.dao.entity.DqsResult;
 import org.apache.dolphinscheduler.dao.entity.TaskInstance;
 import org.apache.dolphinscheduler.remote.command.DBTaskAckCommand;
 import org.apache.dolphinscheduler.remote.command.DBTaskResponseCommand;
 import org.apache.dolphinscheduler.service.process.ProcessService;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -141,11 +143,11 @@ public class TaskResponseService {
                     if (taskInstance != null) {
                         ExecutionStatus status = taskInstance.getState().typeIsFinished() ? taskInstance.getState() : taskResponseEvent.getState();
                         processService.changeTaskState(taskInstance, status,
-                            taskResponseEvent.getStartTime(),
-                            taskResponseEvent.getWorkerAddress(),
-                            taskResponseEvent.getExecutePath(),
-                            taskResponseEvent.getLogPath(),
-                            taskResponseEvent.getTaskInstanceId());
+                                taskResponseEvent.getStartTime(),
+                                taskResponseEvent.getWorkerAddress(),
+                                taskResponseEvent.getExecutePath(),
+                                taskResponseEvent.getLogPath(),
+                                taskResponseEvent.getTaskInstanceId());
                     }
                     // if taskInstance is null (maybe deleted) . retry will be meaningless . so ack success
                     DBTaskAckCommand taskAckCommand = new DBTaskAckCommand(ExecutionStatus.SUCCESS.getCode(), taskResponseEvent.getTaskInstanceId());
@@ -160,6 +162,57 @@ public class TaskResponseService {
                 try {
                     TaskInstance taskInstance = processService.findTaskInstanceById(taskResponseEvent.getTaskInstanceId());
                     if (taskInstance != null) {
+
+                        //add dqs result operate
+                        if(TaskType.DATA_QUALITY == TaskType.valueOf(taskInstance.getTaskType())){
+                            //get the dqs result by task instance id
+                            DqsResult dqsResult = processService.getDqsResultByTaskInstanceId(taskResponseEvent.getTaskInstanceId());
+                            logger.info("DQS Task Result : "+JSONUtils.toJsonString(dqsResult));
+                            if(dqsResult != null){
+                                //check the result ,if result is failure do some operator by failure strategy
+                                CheckType checkType = CheckType.of(dqsResult.getCheckType());
+
+                                double statisticsValue = dqsResult.getStatisticsValue();
+                                double comparisonValue = dqsResult.getComparisonValue();
+                                double threshold = dqsResult.getThreshold();
+                                boolean isFailure = false;
+
+                                OperatorType operatorType = OperatorType.of(dqsResult.getOperator());
+
+                                if(operatorType != null){
+                                    if(CheckType.FIXED_VALUE == checkType){
+                                        isFailure = getCompareResult(operatorType,statisticsValue,threshold);
+                                    }else if(CheckType.PERCENTAGE == checkType){
+                                        isFailure = getCompareResult(operatorType,statisticsValue/comparisonValue *100,threshold);
+                                    }
+                                }
+
+                                if(isFailure){
+                                    DqsFailureStrategy dqsFailureStrategy = DqsFailureStrategy.of(dqsResult.getFailureStrategy());
+                                    if(dqsFailureStrategy != null ){
+                                        switch (dqsFailureStrategy){
+                                            case END:
+                                                taskResponseEvent.setState(ExecutionStatus.FAILURE);
+                                                logger.info("task is failre and end");
+                                                break;
+                                            case CONTINUE:
+                                                logger.info("task is failre and continue");
+                                                break;
+                                            case END_ALTER:
+                                                taskResponseEvent.setState(ExecutionStatus.FAILURE);
+                                                logger.info("task is failre and end and alert");
+                                                break;
+                                            case CONTINUE_ALTER:
+                                                logger.info("task is failre and continue and alert");
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         processService.changeTaskState(taskInstance, taskResponseEvent.getState(),
                             taskResponseEvent.getEndTime(),
                             taskResponseEvent.getProcessId(),
@@ -184,5 +237,36 @@ public class TaskResponseService {
 
     public BlockingQueue<TaskResponseEvent> getEventQueue() {
         return eventQueue;
+    }
+
+    private static boolean getCompareResult(OperatorType operatorType,double srcValue,double targetValue){
+        BigDecimal src = new BigDecimal(srcValue);
+        BigDecimal target = new BigDecimal(targetValue);
+        switch (operatorType){
+            case EQ:
+                return src.compareTo(target) == 0;
+            case LT:
+                return src.compareTo(target) <= -1;
+            case LE:
+                return src.compareTo(target) == 0 || src.compareTo(target) <= -1;
+            case GT:
+                return src.compareTo(target) >= 1 ;
+            case GE:
+                return src.compareTo(target) == 0 || src.compareTo(target) >= 1;
+            case NE:
+                return src.compareTo(target) != 0;
+            default:
+                return true;
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(getCompareResult(OperatorType.EQ,12.00/100.00*100,12.0));
+        System.out.println(getCompareResult(OperatorType.LT,12.00,12.0));
+        System.out.println(getCompareResult(OperatorType.LE,12.00,11.0));
+        System.out.println(getCompareResult(OperatorType.GT,11.00,12.0));
+        System.out.println(getCompareResult(OperatorType.GE,12.00,13.0));
+        System.out.println(getCompareResult(OperatorType.NE,12.00,11.0));
+
     }
 }

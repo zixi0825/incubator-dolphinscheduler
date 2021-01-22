@@ -56,9 +56,9 @@ public class ConnectorFactory {
         if(connectorType != null){
             switch (connectorType){
                 case HIVE:
-                    return new HiveBatchConnector(sparkSession, connectorParameter);
+                    return new HiveConnector(sparkSession, connectorParameter);
                 case JDBC:
-                    return new JDBCBatchConnector(sparkSession, connectorParameter);
+                    return new JDBCConnector(sparkSession, connectorParameter);
                 default:
                     throw new Exception("connector type ${connectorType} is not supported!");
             }

@@ -34,10 +34,10 @@ import org.apache.dolphinscheduler.common.form.CascaderParamsOptions;
 import org.apache.dolphinscheduler.common.form.ParamsOptions;
 import org.apache.dolphinscheduler.common.form.PluginParams;
 import org.apache.dolphinscheduler.common.form.Validate;
-import org.apache.dolphinscheduler.common.form.props.CascaderParamsProps;
 import org.apache.dolphinscheduler.common.form.props.InputParamsProps;
 import org.apache.dolphinscheduler.common.form.type.CascaderParam;
 import org.apache.dolphinscheduler.common.form.type.InputParam;
+import org.apache.dolphinscheduler.common.form.type.RadioParam;
 import org.apache.dolphinscheduler.common.form.type.SelectParam;
 import org.apache.dolphinscheduler.common.task.dqs.rule.CalculateComparisonValueParameter;
 import org.apache.dolphinscheduler.common.task.dqs.rule.FixedComparisonValueParameter;
@@ -53,7 +53,6 @@ import org.apache.dolphinscheduler.dao.mapper.DataSourceMapper;
 import org.apache.dolphinscheduler.dao.mapper.DqsRuleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 /**
@@ -195,7 +194,30 @@ public class DqsRuleServiceImpl extends BaseService  implements DqsRuleService {
     }
 
     private String getRuleFormCreateJson(RuleDefinition ruleDefinition){
-        List<RuleInputEntry> allInputEntryList = new ArrayList<>(ruleDefinition.getRuleInputEntryList());
+
+        List<RuleInputEntry> defaultInputEntryList = new ArrayList<>();
+        List<RuleInputEntry> checkInputEntryList = new ArrayList<>();
+
+        for(RuleInputEntry ruleInputEntry:ruleDefinition.getRuleInputEntryList()){
+            if(ruleInputEntry != null){
+                switch (ruleInputEntry.getInputType()){
+                    case DEFAULT:
+                        defaultInputEntryList.add(ruleInputEntry);
+                        break;
+                    case STATISTICS:
+                        break;
+                    case COMPARISON:
+                        break;
+                    case CHECK:
+                        checkInputEntryList.add(ruleInputEntry);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        List<RuleInputEntry> allInputEntryList = new ArrayList<>(defaultInputEntryList);
         if(ComparisonValueType.CALCULATE_VALUE == ruleDefinition.getComparisonValueType()){
             CalculateComparisonValueParameter calculateComparisonValueParameter =
                     JSONUtils.parseObject(ruleDefinition.getComparisonParameter(),CalculateComparisonValueParameter.class);
@@ -211,13 +233,14 @@ public class DqsRuleServiceImpl extends BaseService  implements DqsRuleService {
             }
         }
 
+        allInputEntryList.addAll(checkInputEntryList);
+
         List<PluginParams> params = new ArrayList<>();
 
         for(RuleInputEntry inputEntry:allInputEntryList){
             if(inputEntry.getShow()){
                 switch (inputEntry.getType()){
                     case INPUT:
-
                         InputParam inputParam = InputParam
                                         .newBuilder(inputEntry.getField(),inputEntry.getTitle())
                                         .addValidate(Validate.newBuilder()
@@ -242,11 +265,28 @@ public class DqsRuleServiceImpl extends BaseService  implements DqsRuleService {
                         SelectParam selectParam = SelectParam
                                 .newBuilder(inputEntry.getField(),inputEntry.getTitle())
                                 .setParamsOptionsList(options)
+                                .setValue(inputEntry.getValue())
                                 .setSize("small")
                                 .build();
                         params.add(selectParam);
                         break;
                     case RADIO:
+                        List<ParamsOptions> radioOptions = null;
+
+                        if(OptionSourceType.DEFAULT == inputEntry.getOptionSourceType()){
+                            String optionStr = inputEntry.getOptions();
+                            if(StringUtils.isNotEmpty(optionStr)){
+                                radioOptions = JSONUtils.toList(optionStr,ParamsOptions.class);
+                            }
+                        }
+
+                        RadioParam radioParam = RadioParam
+                                .newBuilder(inputEntry.getField(),inputEntry.getTitle())
+                                .setParamsOptionsList(radioOptions)
+                                .setValue(inputEntry.getValue())
+                                .setSize("small")
+                                .build();
+                        params.add(radioParam);
                         break;
                     case SWITCH:
                         break;
@@ -281,6 +321,7 @@ public class DqsRuleServiceImpl extends BaseService  implements DqsRuleService {
                         CascaderParam cascaderParam = CascaderParam
                                 .newBuilder(inputEntry.getField(),inputEntry.getTitle())
                                 .setParamsOptionsList(cascaderOptions)
+                                .setValue(inputEntry.getValue())
                                 .setSize("small")
                                 .build();
                         params.add(cascaderParam);
@@ -292,7 +333,7 @@ public class DqsRuleServiceImpl extends BaseService  implements DqsRuleService {
         }
 
         ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL); //属性为NULL不序列化
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         String result = null;
 
         try {
@@ -300,7 +341,6 @@ public class DqsRuleServiceImpl extends BaseService  implements DqsRuleService {
         }catch (JsonProcessingException e){
             e.printStackTrace();
         }
-
 
         return result;
     }

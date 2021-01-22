@@ -30,7 +30,6 @@ import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parser.IRuleParse
 import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parser.MultiTableAccuracyRuleParser;
 import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parser.MultiTableComparisonRuleParser;
 import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parser.SingleTableRuleParser;
-import java.io.File;
 import java.util.*;
 import static org.apache.dolphinscheduler.common.Constants.*;
 
@@ -50,6 +49,8 @@ public class RuleManager {
             "${comparison_name} AS comparison_value," +
             "${check_type} as check_type," +
             "${threshold} as threshold, " +
+            "${operator} as operator, " +
+            "${failure_strategy} as failure_strategy, " +
             "${create_time} as create_time," +
             "${update_time} as update_time " +
             "from ${statistics_table} FULL JOIN ${comparison_table}";
@@ -61,6 +62,8 @@ public class RuleManager {
             "${comparison_name} AS comparison_value," +
             "${check_type} as check_type," +
             "${threshold} as threshold, " +
+            "${operator} as operator, " +
+            "${failure_strategy} as failure_strategy, " +
             "${create_time} as create_time," +
             "${update_time} as update_time " +
             "from ${statistics_table}";
@@ -72,9 +75,11 @@ public class RuleManager {
             "${comparison_name} AS comparison_value," +
             "${check_type} as check_type," +
             "${threshold} as threshold, " +
+            "${operator} as operator, " +
+            "${failure_strategy} as failure_strategy, " +
             "${create_time} as create_time," +
             "${update_time} as update_time " +
-            "from ( ${statistics_execute_sql} )tmp1 "+
+            "from ( ${statistics_execute_sql} ) tmp1 "+
             "join "+
             "( ${comparison_execute_sql} ) tmp2 ";
 
@@ -137,9 +142,9 @@ public class RuleManager {
     }
 
     public static void main(String[] args) throws Exception{
-        testMultiTableAccuracy();
+//        testMultiTableAccuracy();
 //        testMultiTableComparison();
-//        testSingleTable();
+        testSingleTable();
 //        System.out.println(System.getProperty("user.dir")+ File.separator+"lib\\");
 //        createFolder("hello");
     }
@@ -220,6 +225,60 @@ public class RuleManager {
         statisticsName.setOptionSourceType(OptionSourceType.DEFAULT);
         statisticsName.setInputType(InputType.STATISTICS);
         statisticsName.setValueType(ValueType.STRING);
+
+        RuleInputEntry checkType = new RuleInputEntry();
+        checkType.setTitle("检测方式");
+        checkType.setField("check_type");
+        checkType.setType(FormType.RADIO);
+        checkType.setCanEdit(true);
+        checkType.setShow(true);
+        checkType.setOptionSourceType(OptionSourceType.DEFAULT);
+        checkType.setOptions("[{\"label\":\"固定值\",\"value\":\"0\"},{\"label\":\"百分比\",\"value\":\"1\"}]");
+        checkType.setValue("0");
+        checkType.setInputType(InputType.CHECK);
+        checkType.setValueType(ValueType.STRING);
+        checkType.setPlaceholder("检测类型");
+
+        RuleInputEntry operator = new RuleInputEntry();
+        operator.setTitle("操作符");
+        operator.setField("operator");
+        operator.setType(FormType.SELECT);
+        operator.setCanEdit(true);
+        operator.setShow(true);
+        operator.setOptionSourceType(OptionSourceType.DEFAULT);
+        operator.setOptions("[{\"label\":\"等于\",\"value\":\"0\"},{\"label\":\"小于\",\"value\":\"1\"},{\"label\":\"小于等于\",\"value\":\"2\"},{\"label\":\"大于\",\"value\":\"3\"},{\"label\":\"大于等于\",\"value\":\"4\"},{\"label\":\"不等于\",\"value\":\"5\"}]");
+        operator.setValue("0");
+        operator.setInputType(InputType.CHECK);
+        operator.setValueType(ValueType.STRING);
+        operator.setPlaceholder("操作符");
+
+        RuleInputEntry threshold = new RuleInputEntry();
+        threshold.setTitle("阈值");
+        threshold.setField("threshold");
+        threshold.setType(FormType.INPUT);
+        threshold.setCanEdit(true);
+        threshold.setShow(true);
+        threshold.setInputType(InputType.CHECK);
+        threshold.setValueType(ValueType.STRING);
+        threshold.setPlaceholder("阈值");
+
+        RuleInputEntry afterFailure = new RuleInputEntry();
+        afterFailure.setTitle("失败策略");
+        afterFailure.setField("failure_strategy");
+        afterFailure.setType(FormType.SELECT);
+        afterFailure.setCanEdit(true);
+        afterFailure.setShow(true);
+        afterFailure.setOptionSourceType(OptionSourceType.DEFAULT);
+        afterFailure.setOptions("[{\"label\":\"结束\",\"value\":\"0\"},{\"label\":\"继续\",\"value\":\"1\"},{\"label\":\"结束并告警\",\"value\":\"2\"},{\"label\":\"继续并告警\",\"value\":\"3\"}]");
+        afterFailure.setValue("0");
+        afterFailure.setInputType(InputType.CHECK);
+        afterFailure.setValueType(ValueType.STRING);
+        afterFailure.setPlaceholder("失败策略");
+
+        defaultInputEntryList.add(checkType);
+        defaultInputEntryList.add(operator);
+        defaultInputEntryList.add(threshold);
+        defaultInputEntryList.add(afterFailure);
 
         defaultInputEntryList.add(srcConnectorType);
         defaultInputEntryList.add(srcDatasourceId);
@@ -312,11 +371,6 @@ public class RuleManager {
         dataQualityTaskExecutionContext.setSourceType(0);
         dataQualityTaskExecutionContext.setSourceConnectionParams("{\"address\":\"jdbc:mysql://localhost:3306\",\"database\":\"test\",\"jdbcUrl\":\"jdbc:mysql://localhost:3306/test\",\"user\":\"test\",\"password\":\"test\",\"other\":\"autoReconnect=true\"}");
 
-//        dataQualityTaskExecutionContext.setDataTargetId(1);
-//        dataQualityTaskExecutionContext.setTargetConnectorType("HIVE");
-//        dataQualityTaskExecutionContext.setTargetType(2);
-//        dataQualityTaskExecutionContext.setTargetConnectionParams("{\"address\":\"jdbc:mysql://localhost:3306\",\"database\":\"default\",\"jdbcUrl\":\"jdbc:mysql://localhost:3306/test\",\"user\":\"test\",\"password\":\"test\",\"other\":\"autoReconnect=true\"}");
-
         dataQualityTaskExecutionContext.setWriterType(0);
         dataQualityTaskExecutionContext.setWriterConnectorType("JDBC");
         dataQualityTaskExecutionContext.setWriterTable("dqs_result");
@@ -325,7 +379,6 @@ public class RuleManager {
         System.out.println(JSONUtils.toJsonString(ruleDefinition));
         RuleManager ruleManager = new RuleManager(ruleDefinition,inputParameterValue,dataQualityTaskExecutionContext);
         System.out.println(JSONUtils.toJsonString(ruleManager.generateDataQualityParameter()));
-
     }
 
     private static void testMultiTableComparison() throws Exception{
@@ -428,6 +481,60 @@ public class RuleManager {
         comparisonExecuteSql.setShow(true);
         comparisonExecuteSql.setPlaceholder("${comparison_execute_sql}");
         comparisonExecuteSql.setOptionSourceType(OptionSourceType.DEFAULT);
+
+        RuleInputEntry checkType = new RuleInputEntry();
+        checkType.setTitle("检测方式");
+        checkType.setField("check_type");
+        checkType.setType(FormType.RADIO);
+        checkType.setCanEdit(true);
+        checkType.setShow(true);
+        checkType.setOptionSourceType(OptionSourceType.DEFAULT);
+        checkType.setOptions("[{\"label\":\"固定值\",\"value\":\"0\"},{\"label\":\"百分比\",\"value\":\"1\"}]");
+        checkType.setValue("0");
+        checkType.setInputType(InputType.CHECK);
+        checkType.setValueType(ValueType.STRING);
+        checkType.setPlaceholder("检测类型");
+
+        RuleInputEntry operator = new RuleInputEntry();
+        operator.setTitle("操作符");
+        operator.setField("operator");
+        operator.setType(FormType.SELECT);
+        operator.setCanEdit(true);
+        operator.setShow(true);
+        operator.setOptionSourceType(OptionSourceType.DEFAULT);
+        operator.setOptions("[{\"label\":\"等于\",\"value\":\"0\"},{\"label\":\"小于\",\"value\":\"1\"},{\"label\":\"小于等于\",\"value\":\"2\"},{\"label\":\"大于\",\"value\":\"3\"},{\"label\":\"大于等于\",\"value\":\"4\"},{\"label\":\"不等于\",\"value\":\"5\"}]");
+        operator.setValue("0");
+        operator.setInputType(InputType.CHECK);
+        operator.setValueType(ValueType.STRING);
+        operator.setPlaceholder("操作符");
+
+        RuleInputEntry threshold = new RuleInputEntry();
+        threshold.setTitle("阈值");
+        threshold.setField("threshold");
+        threshold.setType(FormType.INPUT);
+        threshold.setCanEdit(true);
+        threshold.setShow(true);
+        threshold.setInputType(InputType.CHECK);
+        threshold.setValueType(ValueType.STRING);
+        threshold.setPlaceholder("阈值");
+
+        RuleInputEntry afterFailure = new RuleInputEntry();
+        afterFailure.setTitle("失败策略");
+        afterFailure.setField("failure_strategy");
+        afterFailure.setType(FormType.SELECT);
+        afterFailure.setCanEdit(true);
+        afterFailure.setShow(true);
+        afterFailure.setOptionSourceType(OptionSourceType.DEFAULT);
+        afterFailure.setOptions("[{\"label\":\"结束\",\"value\":\"0\"},{\"label\":\"继续\",\"value\":\"1\"},{\"label\":\"结束并告警\",\"value\":\"2\"},{\"label\":\"继续并告警\",\"value\":\"3\"}]");
+        afterFailure.setValue("0");
+        afterFailure.setInputType(InputType.CHECK);
+        afterFailure.setValueType(ValueType.STRING);
+        afterFailure.setPlaceholder("失败策略");
+
+        defaultInputEntryList.add(checkType);
+        defaultInputEntryList.add(operator);
+        defaultInputEntryList.add(threshold);
+        defaultInputEntryList.add(afterFailure);
 
         defaultInputEntryList.add(srcConnectorType);
         defaultInputEntryList.add(srcDatasourceId);
@@ -674,6 +781,60 @@ public class RuleManager {
         comparisonName.setShow(false);
         comparisonName.setValue("total_count.total");
         comparisonName.setPlaceholder("${comparison_name}");
+
+        RuleInputEntry checkType = new RuleInputEntry();
+        checkType.setTitle("检测方式");
+        checkType.setField("check_type");
+        checkType.setType(FormType.RADIO);
+        checkType.setCanEdit(true);
+        checkType.setShow(true);
+        checkType.setOptionSourceType(OptionSourceType.DEFAULT);
+        checkType.setOptions("[{\"label\":\"固定值\",\"value\":\"0\"},{\"label\":\"百分比\",\"value\":\"1\"}]");
+        checkType.setValue("0");
+        checkType.setInputType(InputType.CHECK);
+        checkType.setValueType(ValueType.STRING);
+        checkType.setPlaceholder("检测类型");
+
+        RuleInputEntry operator = new RuleInputEntry();
+        operator.setTitle("操作符");
+        operator.setField("operator");
+        operator.setType(FormType.SELECT);
+        operator.setCanEdit(true);
+        operator.setShow(true);
+        operator.setOptionSourceType(OptionSourceType.DEFAULT);
+        operator.setOptions("[{\"label\":\"等于\",\"value\":\"0\"},{\"label\":\"小于\",\"value\":\"1\"},{\"label\":\"小于等于\",\"value\":\"2\"},{\"label\":\"大于\",\"value\":\"3\"},{\"label\":\"大于等于\",\"value\":\"4\"},{\"label\":\"不等于\",\"value\":\"5\"}]");
+        operator.setValue("0");
+        operator.setInputType(InputType.CHECK);
+        operator.setValueType(ValueType.STRING);
+        operator.setPlaceholder("操作符");
+
+        RuleInputEntry threshold = new RuleInputEntry();
+        threshold.setTitle("阈值");
+        threshold.setField("threshold");
+        threshold.setType(FormType.INPUT);
+        threshold.setCanEdit(true);
+        threshold.setShow(true);
+        threshold.setInputType(InputType.CHECK);
+        threshold.setValueType(ValueType.STRING);
+        threshold.setPlaceholder("阈值");
+
+        RuleInputEntry afterFailure = new RuleInputEntry();
+        afterFailure.setTitle("失败策略");
+        afterFailure.setField("failure_strategy");
+        afterFailure.setType(FormType.SELECT);
+        afterFailure.setCanEdit(true);
+        afterFailure.setShow(true);
+        afterFailure.setOptionSourceType(OptionSourceType.DEFAULT);
+        afterFailure.setOptions("[{\"label\":\"结束\",\"value\":\"0\"},{\"label\":\"继续\",\"value\":\"1\"},{\"label\":\"结束并告警\",\"value\":\"2\"},{\"label\":\"继续并告警\",\"value\":\"3\"}]");
+        afterFailure.setValue("0");
+        afterFailure.setInputType(InputType.CHECK);
+        afterFailure.setValueType(ValueType.STRING);
+        afterFailure.setPlaceholder("失败策略");
+
+        defaultInputEntryList.add(checkType);
+        defaultInputEntryList.add(operator);
+        defaultInputEntryList.add(threshold);
+        defaultInputEntryList.add(afterFailure);
 
         comparisonInputEntryList.add(comparisonTitle);
         comparisonInputEntryList.add(comparisonValue);

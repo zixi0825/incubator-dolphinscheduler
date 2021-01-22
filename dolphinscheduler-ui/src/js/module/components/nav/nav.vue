@@ -34,6 +34,13 @@
           </router-link>
         </div>
       </div>
+      <div class="clearfix list" >
+        <div class="nav-links">
+          <router-link :to="{ path: '/security'}" tag="a" active-class="active">
+            <span><em class="ansiconfont fa fa-shield"></em>{{$t('DataQuality')}}</span><strong></strong>
+          </router-link>
+        </div>
+      </div>
       <div class="clearfix list">
         <div class="nav-links">
           <router-link :to="{ path: '/resource'}" tag="a" active-class="active">

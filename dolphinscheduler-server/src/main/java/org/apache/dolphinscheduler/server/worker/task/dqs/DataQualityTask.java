@@ -96,10 +96,8 @@ public class DataQualityTask extends AbstractYarnTask {
         inputParameter.put("rule_type",ruleDefinition.getRuleType().getCode()+"");
         inputParameter.put("create_time","'"+now+"'");
         inputParameter.put("update_time","'"+now+"'");
-        inputParameter.put("threshold","1000");
         inputParameter.put("process_defined_id",taskExecutionContext.getTaskAppId().split("_")[0]);
         inputParameter.put("task_instance_id",taskExecutionContext.getTaskInstanceId()+"");
-        inputParameter.put("check_type","1");
 
         RuleManager ruleManager = new RuleManager(
                 ruleDefinition,

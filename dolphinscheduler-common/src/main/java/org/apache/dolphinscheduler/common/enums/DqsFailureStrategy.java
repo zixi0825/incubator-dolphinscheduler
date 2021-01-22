@@ -17,18 +17,24 @@
 package org.apache.dolphinscheduler.common.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum InputType{
+/**
+ * failure policy when dqs task node failed.
+ */
+public enum DqsFailureStrategy {
+
   /**
-   *
-   */
-  DEFAULT(0,"default"),
-  STATISTICS(1,"statistics"),
-  COMPARISON(2,"comparison"),
-  CHECK(3,"check");
+   * 0 ending process when dqs tasks failed.
+   * 1 continue running when dqs tasks failed.
+   * 2 ending process and alter when dqs tasks failed.
+   * 3 continue running and alter when dqs tasks failed.
+   **/
+  END(0, "end"),
+  CONTINUE(1, "continue"),
+  END_ALTER(2, "end_alter"),
+  CONTINUE_ALTER(3, "continue_alter");
 
-  InputType(int code, String description){
+  DqsFailureStrategy(int code, String description){
     this.code = code;
     this.description = description;
   }
@@ -37,7 +43,6 @@ public enum InputType{
   private final int code;
   private final String description;
 
-  @JsonValue
   public int getCode() {
     return code;
   }
@@ -46,8 +51,8 @@ public enum InputType{
     return description;
   }
 
-  public static InputType of(int value){
-    for (InputType e:InputType.values()) {
+  public static DqsFailureStrategy of(int value){
+    for (DqsFailureStrategy e:DqsFailureStrategy.values()) {
       if(e.ordinal() == value) {
         return e;
       }

@@ -17,34 +17,50 @@
 package org.apache.dolphinscheduler.dqs.flow.connector;
 
 import org.apache.dolphinscheduler.dqs.configuration.ConnectorParameter;
+import org.apache.dolphinscheduler.dqs.utils.JDBCUtil;
+import org.apache.dolphinscheduler.dqs.utils.Preconditions;
 import org.apache.spark.sql.SparkSession;
 
 import java.util.Map;
 
 import static org.apache.dolphinscheduler.dqs.Constants.*;
-import static org.apache.dolphinscheduler.dqs.Constants.DEFAULT_DRIVER;
 
 /**
- * HiveBatchConnector
+ * JDBCConnector
  */
-public class HiveBatchConnector implements IConnector {
+public class JDBCConnector implements IConnector {
 
     private SparkSession sparkSession;
 
     private ConnectorParameter connectorParameter;
 
-    public HiveBatchConnector(SparkSession sparkSession, ConnectorParameter connectorParameter){
+    public JDBCConnector(SparkSession sparkSession, ConnectorParameter connectorParameter){
         this.sparkSession = sparkSession;
         this.connectorParameter = connectorParameter;
     }
 
     @Override
     public void execute() {
+
         Map<String,Object> config = connectorParameter.getConfig();
         String database = String.valueOf(config.getOrDefault(DATABASE,DEFAULT_DATABASE));
         String table = String.valueOf(config.getOrDefault(TABLE,EMPTY));
         String fullTableName = database+"."+table;
+        String url = String.valueOf(config.getOrDefault(URL,EMPTY));
+        String user = String.valueOf(config.getOrDefault(USER,EMPTY));
+        String password = String.valueOf(config.getOrDefault(PASSWORD,EMPTY));
+        String driver = String.valueOf(config.getOrDefault(DRIVER,DEFAULT_DRIVER));
 
-        sparkSession.table(fullTableName).createOrReplaceTempView(table);
+        Preconditions.checkArgument(JDBCUtil.isJDBCDriverLoaded(driver), "JDBC driver $driver not present in classpath");
+
+        sparkSession
+                .read()
+                .format("jdbc")
+                .option("driver",driver)
+                .option("url",url)
+                .option("dbtable", fullTableName)
+                .option("user", user)
+                .option("password", password)
+                .load().createOrReplaceTempView(table);
     }
 }

@@ -358,6 +358,7 @@ export default {
   'Please select the file to upload': '请选择要上传的文件',
   'Resources manage': '资源中心',
   Security: '安全中心',
+  DataQuality: '数据质量',
   Logout: '退出',
   'No data': '查询无数据',
   'Uploading...': '文件上传中',

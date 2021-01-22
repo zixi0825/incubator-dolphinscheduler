@@ -358,6 +358,7 @@ export default {
   'Please select the file to upload': 'Please select the file to upload',
   'Resources manage': 'Resources',
   Security: 'Security',
+  DataQuality: 'DataQuality',
   Logout: 'Logout',
   'No data': 'No data',
   'Uploading...': 'Uploading...',

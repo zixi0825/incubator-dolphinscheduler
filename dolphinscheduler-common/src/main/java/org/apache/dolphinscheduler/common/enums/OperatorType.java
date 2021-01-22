@@ -19,40 +19,50 @@ package org.apache.dolphinscheduler.common.enums;
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum InputType{
-  /**
-   *
-   */
-  DEFAULT(0,"default"),
-  STATISTICS(1,"statistics"),
-  COMPARISON(2,"comparison"),
-  CHECK(3,"check");
+/**
+ * OperatorType
+ */
+public enum OperatorType {
+    /**
+     * 0-equal
+     * 1-little than
+     * 2-little and equal
+     * 3-great than
+     * 4-great and equal
+     * 5-not equal
+     */
+    EQ(0,"equal"),
+    LT(1,"little than"),
+    LE(2,"little and equal"),
+    GT(3,"great than"),
+    GE(4,"great and equal"),
+    NE(5,"not equal");
 
-  InputType(int code, String description){
-    this.code = code;
-    this.description = description;
-  }
-
-  @EnumValue
-  private final int code;
-  private final String description;
-
-  @JsonValue
-  public int getCode() {
-    return code;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public static InputType of(int value){
-    for (InputType e:InputType.values()) {
-      if(e.ordinal() == value) {
-        return e;
-      }
+    OperatorType(int code, String description){
+        this.code = code;
+        this.description = description;
     }
-    //For values out of enum scope
-    return null;
-  }
+
+    @EnumValue
+    private final int code;
+    private final String description;
+
+    @JsonValue
+    public int getCode() {
+        return code;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public static OperatorType of(int value){
+        for (OperatorType e:OperatorType.values()) {
+            if(e.ordinal() == value) {
+                return e;
+            }
+        }
+        //For values out of enum scope
+        return null;
+    }
 }
