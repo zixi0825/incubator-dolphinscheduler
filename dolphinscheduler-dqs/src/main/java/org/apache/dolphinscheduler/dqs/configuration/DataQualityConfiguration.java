@@ -30,9 +30,6 @@ public class DataQualityConfiguration implements IParameter {
     @JsonProperty("name")
     private String name;
 
-    @JsonProperty("spark")
-    private SparkParameter sparkParameter;
-
     @JsonProperty("connectors")
     private List<ConnectorParameter> connectorParameters;
 
@@ -45,12 +42,10 @@ public class DataQualityConfiguration implements IParameter {
     public DataQualityConfiguration(){}
 
     public DataQualityConfiguration(String name,
-                                    SparkParameter sparkParameter,
                                     List<ConnectorParameter> connectorParameters,
                                     List<WriterParameter> writerParams,
                                     List<ExecutorParameter> executorParameters){
         this.name = name;
-        this.sparkParameter = sparkParameter;
         this.connectorParameters = connectorParameters;
         this.writerParams = writerParams;
         this.executorParameters = executorParameters;
@@ -64,13 +59,6 @@ public class DataQualityConfiguration implements IParameter {
         this.name = name;
     }
 
-    public SparkParameter getSparkParameter() {
-        return sparkParameter;
-    }
-
-    public void setSparkParam(SparkParameter sparkParameter) {
-        this.sparkParameter = sparkParameter;
-    }
 
     public List<ConnectorParameter> getConnectorParameters() {
         return connectorParameters;
@@ -99,7 +87,6 @@ public class DataQualityConfiguration implements IParameter {
     @Override
     public void validate() {
         Preconditions.checkArgument(StringUtils.isNotEmpty(name), "name should not be empty");
-        Preconditions.checkArgument(sparkParameter!= null, "spark param should not be empty");
         Preconditions.checkArgument(connectorParameters != null, "connector param should not be empty");
         Preconditions.checkArgument(writerParams!= null, "writer param should not be empty");
         Preconditions.checkArgument(executorParameters != null, "executor param should not be empty");

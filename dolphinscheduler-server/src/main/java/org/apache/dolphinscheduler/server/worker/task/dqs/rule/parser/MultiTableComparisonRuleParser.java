@@ -47,7 +47,6 @@ public class MultiTableComparisonRuleParser implements IRuleParser {
 
         return new DataQualityConfiguration(
                 ruleDefinition.getRuleName(),
-                new SparkParameter(),
                 connectorParameterList,
                 writerParameterList,
                 executorParameterList);

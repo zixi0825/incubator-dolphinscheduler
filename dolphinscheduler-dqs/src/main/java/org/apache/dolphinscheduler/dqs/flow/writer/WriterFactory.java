@@ -56,7 +56,7 @@ public class WriterFactory {
         if(writerType != null){
             switch (writerType){
                 case JDBC:
-                    return new JDBCWriter(sparkSession,writerParam);
+                    return new JdbcWriter(sparkSession,writerParam);
                 default:
                     throw new Exception("writer type $readerType is not supported!");
             }

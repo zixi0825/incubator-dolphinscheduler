@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.dolphinscheduler.dqs.flow.writer;
+package org.apache.dolphinscheduler.dqs.flow.connector;
 
-import org.apache.dolphinscheduler.dqs.configuration.WriterParameter;
-import org.apache.dolphinscheduler.dqs.utils.JDBCUtil;
+import org.apache.dolphinscheduler.dqs.configuration.ConnectorParameter;
+import org.apache.dolphinscheduler.dqs.utils.JdbcUtil;
 import org.apache.dolphinscheduler.dqs.utils.Preconditions;
-import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 
 import java.util.Map;
@@ -27,23 +26,23 @@ import java.util.Map;
 import static org.apache.dolphinscheduler.dqs.Constants.*;
 
 /**
- * JDBCWriter
+ * JdbcConnector
  */
-public class JDBCWriter implements IWriter {
+public class JdbcConnector implements IConnector {
 
     private SparkSession sparkSession;
 
-    private WriterParameter writerParam;
+    private ConnectorParameter connectorParameter;
 
-    public JDBCWriter(SparkSession sparkSession, WriterParameter writerParam){
+    public JdbcConnector(SparkSession sparkSession, ConnectorParameter connectorParameter){
         this.sparkSession = sparkSession;
-        this.writerParam = writerParam;
+        this.connectorParameter = connectorParameter;
     }
 
     @Override
     public void execute() {
 
-        Map<String,Object> config = writerParam.getConfig();
+        Map<String,Object> config = connectorParameter.getConfig();
         String database = String.valueOf(config.getOrDefault(DATABASE,DEFAULT_DATABASE));
         String table = String.valueOf(config.getOrDefault(TABLE,EMPTY));
         String fullTableName = database+"."+table;
@@ -51,20 +50,17 @@ public class JDBCWriter implements IWriter {
         String user = String.valueOf(config.getOrDefault(USER,EMPTY));
         String password = String.valueOf(config.getOrDefault(PASSWORD,EMPTY));
         String driver = String.valueOf(config.getOrDefault(DRIVER,DEFAULT_DRIVER));
-        String sql = String.valueOf(config.getOrDefault(SQL,EMPTY));
 
-        Preconditions.checkArgument(JDBCUtil.isJDBCDriverLoaded(driver), "JDBC driver $driver not present in classpath");
+        Preconditions.checkArgument(JdbcUtil.isJdbcDriverLoaded(driver), "JDBC driver $driver not present in classpath");
 
-        sparkSession.sql(sql)
-                .write()
+        sparkSession
+                .read()
                 .format("jdbc")
                 .option("driver",driver)
                 .option("url",url)
                 .option("dbtable", fullTableName)
                 .option("user", user)
                 .option("password", password)
-                .mode(SaveMode.Append)
-                .save();
+                .load().createOrReplaceTempView(table);
     }
-
 }

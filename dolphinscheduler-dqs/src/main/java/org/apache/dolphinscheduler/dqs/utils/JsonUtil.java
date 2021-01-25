@@ -32,11 +32,11 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.*;
 import static com.fasterxml.jackson.databind.MapperFeature.REQUIRE_SETTERS_FOR_GETTERS;
 
 /**
- * JSONUtil
+ * JsonUtil
  */
-public class JSONUtil {
+public class JsonUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(JSONUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(JsonUtil.class);
 
     /**
      * can use static singleton, inject: just make sure to reuse!
@@ -48,11 +48,10 @@ public class JSONUtil {
             .configure(REQUIRE_SETTERS_FOR_GETTERS, true)
             .setTimeZone(TimeZone.getDefault());
 
-    private JSONUtil() {
+    private JsonUtil() {
         throw new UnsupportedOperationException("Construct JSONUtils");
     }
-    
-    
+
     public static String toJson(Object object,SerializationFeature feature){
         try {
             ObjectWriter writer = MAPPER.writer(feature);

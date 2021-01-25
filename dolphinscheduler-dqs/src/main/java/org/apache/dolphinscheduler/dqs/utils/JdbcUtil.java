@@ -20,13 +20,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * JDBCUtil
+ * JdbcUtil
  */
-public class JDBCUtil {
+public class JdbcUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(JDBCUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(JdbcUtil.class);
 
-    public static boolean isJDBCDriverLoaded(String driver){
+    public static boolean isJdbcDriverLoaded(String driver){
         try{
             Class.forName(driver);
             return true;

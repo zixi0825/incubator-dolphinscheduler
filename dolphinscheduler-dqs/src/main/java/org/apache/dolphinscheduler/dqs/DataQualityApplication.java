@@ -22,14 +22,13 @@ import org.apache.dolphinscheduler.dqs.flow.DataQualityTask;
 import org.apache.dolphinscheduler.dqs.flow.connector.ConnectorFactory;
 import org.apache.dolphinscheduler.dqs.flow.executor.SparkSqlExecuteTask;
 import org.apache.dolphinscheduler.dqs.flow.writer.WriterFactory;
-import org.apache.dolphinscheduler.dqs.utils.JSONUtil;
+import org.apache.dolphinscheduler.dqs.utils.JsonUtil;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.SparkSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * DataQualityApplication
@@ -41,29 +40,22 @@ public class DataQualityApplication {
     public static void main(String[] args) throws Exception {
 
         if (args.length < 1) {
-            logger.error("Usage: class <DataQualityConfiguration>");
+            logger.error("can not find DataQualityConfiguration");
             System.exit(-1);
         }
 
         String dataQualityParameter = args[0];
-//        String dataQualityParameter = FileUtils.readFileToString(new File(args[0]));
         logger.info("dataQualityParameter: "+dataQualityParameter);
 
-        DataQualityConfiguration dataQualityConfiguration = JSONUtil.fromJson(dataQualityParameter,DataQualityConfiguration.class);
+        DataQualityConfiguration dataQualityConfiguration = JsonUtil.fromJson(dataQualityParameter,DataQualityConfiguration.class);
         if(dataQualityConfiguration == null){
             System.exit(-1);
         }
 
         SparkConf conf = new SparkConf().setAppName(dataQualityConfiguration.getName());
-        if(dataQualityConfiguration.getSparkParameter().getConfig() != null){
-            for(Map.Entry<String,String> entry: dataQualityConfiguration.getSparkParameter().getConfig().entrySet()){
-                conf.set(entry.getKey(), entry.getValue());
-            }
-        }
 
         conf.set("spark.sql.crossJoin.enabled", "true");
         SparkSession sparkSession = SparkSession.builder().config(conf).enableHiveSupport().getOrCreate();
-//        SparkSession sparkSession = SparkSession.builder().config(conf).getOrCreate();
 
         DataQualityContext context = new DataQualityContext(
                 sparkSession,

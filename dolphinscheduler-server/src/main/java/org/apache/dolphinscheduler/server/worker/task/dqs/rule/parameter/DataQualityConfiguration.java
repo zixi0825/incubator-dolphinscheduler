@@ -27,9 +27,6 @@ public class DataQualityConfiguration {
     @JsonProperty("name")
     private String name;
 
-    @JsonProperty("spark")
-    private SparkParameter sparkParameter;
-
     @JsonProperty("connectors")
     private List<ConnectorParameter> connectorParameters;
 
@@ -42,12 +39,10 @@ public class DataQualityConfiguration {
     public DataQualityConfiguration(){}
 
     public DataQualityConfiguration(String name,
-                                    SparkParameter sparkParameter,
                                     List<ConnectorParameter> connectorParameters,
                                     List<WriterParameter> writerParams,
                                     List<ExecutorParameter> executorParameters){
         this.name = name;
-        this.sparkParameter = sparkParameter;
         this.connectorParameters = connectorParameters;
         this.writerParams = writerParams;
         this.executorParameters = executorParameters;
@@ -59,14 +54,6 @@ public class DataQualityConfiguration {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public SparkParameter getSparkParameter() {
-        return sparkParameter;
-    }
-
-    public void setSparkParam(SparkParameter sparkParameter) {
-        this.sparkParameter = sparkParameter;
     }
 
     public List<ConnectorParameter> getConnectorParameters() {

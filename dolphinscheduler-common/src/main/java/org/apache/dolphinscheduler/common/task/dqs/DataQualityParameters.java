@@ -60,6 +60,11 @@ public class DataQualityParameters extends AbstractParameters {
         this.ruleInputParameter = ruleInputParameter;
     }
 
+    /**
+     * In this function ,we need more detailed check every parameter,
+     * if the parameter is non-conformant will return false
+     * @return boolean result
+     */
     @Override
     public boolean checkParameters() {
 
