@@ -16,16 +16,13 @@
  */
 package org.apache.dolphinscheduler.server.utils;
 
-import org.apache.dolphinscheduler.common.enums.ComparisonValueType;
 import org.apache.dolphinscheduler.common.enums.DbType;
 import org.apache.dolphinscheduler.common.task.dqs.rule.*;
-import org.apache.dolphinscheduler.common.utils.JSONUtils;
 import org.apache.dolphinscheduler.common.utils.ParameterUtils;
 import org.apache.dolphinscheduler.common.utils.StringUtils;
 import org.apache.dolphinscheduler.dao.datasource.BaseDataSource;
 import org.apache.dolphinscheduler.dao.datasource.DataSourceFactory;
 import org.apache.dolphinscheduler.server.entity.DataQualityTaskExecutionContext;
-import org.apache.dolphinscheduler.server.worker.task.dqs.rule.*;
 import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parameter.ConnectorParameter;
 import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parameter.ExecutorParameter;
 import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parameter.WriterParameter;
@@ -35,15 +32,15 @@ import java.util.List;
 import java.util.Map;
 import static org.apache.dolphinscheduler.common.Constants.*;
 import static org.apache.dolphinscheduler.common.Constants.DRIVER;
-import static org.apache.dolphinscheduler.server.worker.task.dqs.rule.RuleManager.FIXED_COMPARISON_WRITER_SQL;
 
 /**
  * RuleParserUtils
  */
 public class RuleParserUtils {
 
-    public static List<ConnectorParameter> getConnectorParameterList(Map<String, String> inputParameterValue,
-                                                               DataQualityTaskExecutionContext dataQualityTaskExecutionContext) throws Exception{
+    public static List<ConnectorParameter> getConnectorParameterList(
+                                            Map<String, String> inputParameterValue,
+                                            DataQualityTaskExecutionContext dataQualityTaskExecutionContext) throws Exception{
 
         List<ConnectorParameter> connectorParameterList = new ArrayList<>();
 
@@ -150,7 +147,7 @@ public class RuleParserUtils {
         return index;
     }
 
-    public static  int setExecutorParameter(int index,
+    private static int setExecutorParameter(int index,
                                      Map<String, String> inputParameterValueResult,
                                      List<ExecutorParameter> executorParameterList,
                                      ExecuteSqlDefinition executeSqlDefinition) {
@@ -177,19 +174,10 @@ public class RuleParserUtils {
 
     public static Map<String,String> getInputParameterMapFromEntryList(RuleDefinition ruleDefinition){
         List<RuleInputEntry> defaultInputEntryList = ruleDefinition.getRuleInputEntryList();
-        if(ComparisonValueType.CALCULATE_VALUE == ruleDefinition.getComparisonValueType()){
-            CalculateComparisonValueParameter calculateComparisonValueParameter =
-                    JSONUtils.parseObject(ruleDefinition.getComparisonParameter(),CalculateComparisonValueParameter.class);
-            if(calculateComparisonValueParameter != null){
-                defaultInputEntryList.addAll(calculateComparisonValueParameter.getInputEntryList());
-            }
 
-        }else if(ComparisonValueType.FIXED_VALUE == ruleDefinition.getComparisonValueType()){
-            FixedComparisonValueParameter fixedComparisonValueParameter =
-                    JSONUtils.parseObject(ruleDefinition.getComparisonParameter(),FixedComparisonValueParameter.class);
-            if(fixedComparisonValueParameter != null){
-                defaultInputEntryList.addAll(fixedComparisonValueParameter.getInputEntryList());
-            }
+        ComparisonParameter comparisonParameter = ruleDefinition.getComparisonParameter();
+        if(comparisonParameter != null){
+            defaultInputEntryList.addAll(comparisonParameter.getInputEntryList());
         }
 
         Map<String,String> defaultInputParameterValue = new HashMap<>();
@@ -206,7 +194,7 @@ public class RuleParserUtils {
 
         List<WriterParameter> writerParameterList = new ArrayList<>();
 
-        if(StringUtils.isNotEmpty(dataQualityTaskExecutionContext.getSourceConnectorType())){
+        if(StringUtils.isNotEmpty(dataQualityTaskExecutionContext.getWriterConnectorType())){
             BaseDataSource writerDataSource = DataSourceFactory.getDatasource(DbType.of(dataQualityTaskExecutionContext.getWriterType()),
                     dataQualityTaskExecutionContext.getWriterConnectionParams());
             WriterParameter writerParameter = new WriterParameter();
@@ -247,9 +235,7 @@ public class RuleParserUtils {
         String srcColumnNotNull = "( NOT (" + getSrcColumnIsNullStr(inputParameterValueResult.get(SRC_TABLE),mappingColumnList) + " ))";
         String targetColumnIsNull = "( " + getSrcColumnIsNullStr(inputParameterValueResult.get(TARGET_TABLE),mappingColumnList) + " )";
 
-        return srcColumnNotNull
-                + AND
-                + targetColumnIsNull;
+        return srcColumnNotNull + AND + targetColumnIsNull;
     }
 
     public static List<WriterParameter> getWriterParameterList(
@@ -257,51 +243,43 @@ public class RuleParserUtils {
                                                   int index,
                                                   Map<String, String> inputParameterValueResult,
                                                   List<ExecutorParameter> executorParameterList,
-                                                  DataQualityTaskExecutionContext dataQualityTaskExecutionContext) throws Exception {
-        if(ComparisonValueType.CALCULATE_VALUE == ruleDefinition.getComparisonValueType()){
-            CalculateComparisonValueParameter calculateComparisonValueParameter =
-                    JSONUtils.parseObject(ruleDefinition.getComparisonParameter(),CalculateComparisonValueParameter.class);
+                                                  DataQualityTaskExecutionContext dataQualityTaskExecutionContext,
+                                                  String writerSql) throws Exception {
+        ComparisonParameter comparisonParameter = ruleDefinition.getComparisonParameter();
 
-            List<ExecuteSqlDefinition>  comparisonExecuteSqlList =
-                    calculateComparisonValueParameter.getComparisonExecuteSqlList();
+        List<ExecuteSqlDefinition>  comparisonExecuteSqlList =
+                comparisonParameter.getComparisonExecuteSqlList();
 
-            ExecuteSqlDefinition comparisonSql = comparisonExecuteSqlList.get(0);
-            inputParameterValueResult.put(COMPARISON_TABLE,comparisonSql.getTableAlias());
+        ExecuteSqlDefinition comparisonSql = comparisonExecuteSqlList.get(0);
+        inputParameterValueResult.put(COMPARISON_TABLE,comparisonSql.getTableAlias());
 
-            if(StringUtils.isEmpty(inputParameterValueResult.get(SRC_FILTER))){
-                for(ExecuteSqlDefinition executeSqlDefinition:comparisonExecuteSqlList){
-                    String sql = executeSqlDefinition.getSql();
-                    sql = sql.replace("AND (${src_filter})","").replace("WHERE (${src_filter})","");
-                    executeSqlDefinition.setSql(sql);
-                }
-            }
-
-            if(StringUtils.isEmpty(inputParameterValueResult.get(TARGET_FILTER))){
-                for(ExecuteSqlDefinition executeSqlDefinition:comparisonExecuteSqlList){
-                    String sql = executeSqlDefinition.getSql();
-                    sql = sql.replace("AND (${target_filter})","").replace("WHERE (${target_filter})","");
-                    executeSqlDefinition.setSql(sql);
-                }
-            }
-
+        if(StringUtils.isEmpty(inputParameterValueResult.get(SRC_FILTER))){
             for(ExecuteSqlDefinition executeSqlDefinition:comparisonExecuteSqlList){
-                index = setExecutorParameter(
-                        index,
-                        inputParameterValueResult,
-                        executorParameterList,
-                        executeSqlDefinition);
+                String sql = executeSqlDefinition.getSql();
+                sql = sql.replace("AND (${src_filter})","").replace("WHERE (${src_filter})","");
+                executeSqlDefinition.setSql(sql);
             }
-
-            return getWriterParameterList(
-                    ParameterUtils.convertParameterPlaceholders(RuleManager.CALCULATE_COMPARISON_WRITER_SQL,inputParameterValueResult),
-                    dataQualityTaskExecutionContext
-                    );
-
-        } else if(ComparisonValueType.FIXED_VALUE == ruleDefinition.getComparisonValueType()){
-            return getWriterParameterList(
-                    ParameterUtils.convertParameterPlaceholders(FIXED_COMPARISON_WRITER_SQL,inputParameterValueResult),dataQualityTaskExecutionContext);
         }
 
-        return new ArrayList<WriterParameter>();
+        if(StringUtils.isEmpty(inputParameterValueResult.get(TARGET_FILTER))){
+            for(ExecuteSqlDefinition executeSqlDefinition:comparisonExecuteSqlList){
+                String sql = executeSqlDefinition.getSql();
+                sql = sql.replace("AND (${target_filter})","").replace("WHERE (${target_filter})","");
+                executeSqlDefinition.setSql(sql);
+            }
+        }
+
+        for(ExecuteSqlDefinition executeSqlDefinition:comparisonExecuteSqlList){
+            index = setExecutorParameter(
+                    index,
+                    inputParameterValueResult,
+                    executorParameterList,
+                    executeSqlDefinition);
+        }
+
+        return getWriterParameterList(
+                ParameterUtils.convertParameterPlaceholders(writerSql,inputParameterValueResult),
+                dataQualityTaskExecutionContext
+                );
     }
 }

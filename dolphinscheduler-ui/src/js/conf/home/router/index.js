@@ -401,6 +401,27 @@ const router = new Router({
       ]
     },
     {
+      path: '/dqs',
+      name: 'dqs',
+      component: resolve => require(['../pages/dqs/index'], resolve),
+      meta: {
+        title: `${i18n.$t('DataQuality')}`
+      },
+      redirect: {
+        name: 'dqs-result-list'
+      },
+      children: [
+        {
+          path: '/dqs/result',
+          name: 'dqs-result-list',
+          component: resolve => require(['../pages/dqs/pages/result/index'], resolve),
+          meta: {
+            title: `${i18n.$t('Dqs Result List')}`
+          }
+        }
+      ]
+    },
+    {
       path: '/user',
       name: 'user',
       component: resolve => require(['../pages/user/index'], resolve),

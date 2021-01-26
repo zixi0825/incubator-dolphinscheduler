@@ -54,7 +54,7 @@
                 </configuration>
               </execution>
               <execution>
-                <id>npm install node-sass --unsafe-perm</id>
+                <id>cnpm install node-sass --unsafe-perm</id>
                 <goals>
                   <goal>npm</goal>
                 </goals>
@@ -109,7 +109,7 @@
                 </configuration>
               </execution>
               <execution>
-                <id>npm install node-sass --unsafe-perm</id>
+                <id>cnpm install node-sass --unsafe-perm</id>
                 <goals>
                   <goal>npm</goal>
                 </goals>
@@ -164,7 +164,7 @@
                 </configuration>
               </execution>
               <execution>
-                <id>npm install node-sass --unsafe-perm</id>
+                <id>cnpm install node-sass --unsafe-perm</id>
                 <goals>
                   <goal>npm</goal>
                 </goals>

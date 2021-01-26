@@ -38,7 +38,16 @@
     <div class="form-box">
         <form-create v-model="fApi" :rule="rule" :option="option" ></form-create>
     </div>
-  
+    <m-list-box>
+      <div slot="text">{{$t('Deploy Mode')}}</div>
+      <div slot="content">
+        <el-radio-group v-model="deployMode" size="small">
+          <el-radio :label="'cluster'" :disabled="isDetails"></el-radio>
+          <el-radio :label="'client'" :disabled="isDetails"></el-radio>
+          <el-radio :label="'local'" :disabled="isDetails"></el-radio>
+        </el-radio-group>
+      </div>
+    </m-list-box>
     <m-list-4-box>
       <div slot="text">{{$t('Driver cores')}}</div>
       <div slot="content">

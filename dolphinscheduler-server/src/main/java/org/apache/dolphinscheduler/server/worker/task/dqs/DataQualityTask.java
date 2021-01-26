@@ -84,16 +84,23 @@ public class DataQualityTask extends AbstractYarnTask {
 
         Map<String,String> inputParameter = dataQualityParameters.getRuleInputParameter();
         for(Map.Entry<String,String> entry: inputParameter.entrySet()){
-            entry.setValue(entry.getValue().trim());
+            if(entry != null){
+                entry.setValue(entry.getValue().trim());
+            }
         }
 
         RuleDefinition ruleDefinition = JSONUtils.parseObject(dataQualityParameters.getRuleJson(),RuleDefinition.class);
+
+        if(ruleDefinition == null ){
+            throw new RuntimeException("RuleDefinition is null");
+        }
 
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime time = LocalDateTime.now();
         String now = df.format(time);
 
         inputParameter.put("rule_type",ruleDefinition.getRuleType().getCode()+"");
+        inputParameter.put("rule_name",ruleDefinition.getRuleName()+"");
         inputParameter.put("create_time","'"+now+"'");
         inputParameter.put("update_time","'"+now+"'");
         inputParameter.put("process_defined_id",taskExecutionContext.getTaskAppId().split("_")[0]);

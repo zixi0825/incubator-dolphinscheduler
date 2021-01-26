@@ -20,6 +20,7 @@ import org.apache.dolphinscheduler.server.entity.DataQualityTaskExecutionContext
 import org.apache.dolphinscheduler.server.utils.RuleParserUtils;
 import org.apache.dolphinscheduler.common.task.dqs.rule.ExecuteSqlDefinition;
 import org.apache.dolphinscheduler.common.task.dqs.rule.RuleDefinition;
+import org.apache.dolphinscheduler.server.worker.task.dqs.rule.RuleManager;
 import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parameter.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,12 @@ public class MultiTableAccuracyRuleParser implements IRuleParser {
         index = RuleParserUtils.replaceExecuteSqlPlaceholder(ruleDefinition, index, inputParameterValue, executorParameterList);
 
         List<WriterParameter> writerParameterList = RuleParserUtils.getWriterParameterList(
-                ruleDefinition,index,inputParameterValue,executorParameterList,dataQualityTaskExecutionContext);
+                ruleDefinition,
+                index,
+                inputParameterValue,
+                executorParameterList,
+                dataQualityTaskExecutionContext,
+                RuleManager.DEFAULT_COMPARISON_WRITER_SQL);
 
         return new DataQualityConfiguration(
                 ruleDefinition.getRuleName(),

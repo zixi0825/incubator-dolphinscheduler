@@ -20,8 +20,10 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
+import java.util.Map;
 
 @TableName("t_ds_dqs_result")
 public class DqsResult {
@@ -31,20 +33,35 @@ public class DqsResult {
     @TableId(value = "id", type = IdType.AUTO)
     private int id;
     /**
-     * task_id
+     * process_defined_id
      */
-    @TableField(value = "process_defined_id")
-    private long processDefinedId;
+    @TableField(value = "process_definition_id")
+    private long processDefinitionId;
+    /**
+     * process define name
+     */
+    @TableField(exist = false)
+    private String  processDefinitionName;
     /**
      * task_instance_id
      */
     @TableField(value = "task_instance_id")
     private long taskInstanceId;
     /**
+     * task name
+     */
+    @TableField(exist = false)
+    private String  taskName;
+    /**
      * rule_type
      */
     @TableField(value = "rule_type")
     private int ruleType;
+    /**
+     * rule_name
+     */
+    @TableField(value = "rule_name")
+    private String ruleName;
     /**
      * statistics_value
      */
@@ -76,14 +93,31 @@ public class DqsResult {
     @TableField(value = "failure_strategy")
     private int failureStrategy;
     /**
+     * user id
+     */
+    @TableField(value = "user_id")
+    private int userId;
+    /**
+     * user_name
+     */
+    @TableField(exist = false)
+    private String userName;
+    /**
+     * state
+     */
+    @TableField(value = "state")
+    private int state;
+    /**
      * create_time
      */
     @TableField(value = "create_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
     /**
      * update_time
      */
     @TableField(value = "update_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
 
     public int getId() {
@@ -94,12 +128,12 @@ public class DqsResult {
         this.id = id;
     }
 
-    public long getProcessDefinedId() {
-        return processDefinedId;
+    public long getProcessDefinitionId() {
+        return processDefinitionId;
     }
 
-    public void setProcessDefinedId(long processDefinedId) {
-        this.processDefinedId = processDefinedId;
+    public void setProcessDefinitionId(long processDefinitionId) {
+        this.processDefinitionId = processDefinitionId;
     }
 
     public long getTaskInstanceId() {
@@ -116,6 +150,14 @@ public class DqsResult {
 
     public void setRuleType(int ruleType) {
         this.ruleType = ruleType;
+    }
+
+    public String getRuleName() {
+        return ruleName;
+    }
+
+    public void setRuleName(String ruleName) {
+        this.ruleName = ruleName;
     }
 
     public double getStatisticsValue() {
@@ -166,6 +208,30 @@ public class DqsResult {
         this.failureStrategy = failureStrategy;
     }
 
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -182,6 +248,22 @@ public class DqsResult {
         this.updateTime = updateTime;
     }
 
+    public String getProcessDefinitionName() {
+        return processDefinitionName;
+    }
+
+    public void setProcessDefinitionName(String processDefinitionName) {
+        this.processDefinitionName = processDefinitionName;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -196,7 +278,7 @@ public class DqsResult {
         if (id != that.id) {
             return false;
         }
-        if (processDefinedId != that.processDefinedId) {
+        if (processDefinitionId != that.processDefinitionId) {
             return false;
         }
         if (taskInstanceId != that.taskInstanceId) {
@@ -223,6 +305,12 @@ public class DqsResult {
         if (failureStrategy != that.failureStrategy) {
             return false;
         }
+        if (userId != that.userId) {
+            return false;
+        }
+        if (state != that.state) {
+            return false;
+        }
         if (createTime != null && !createTime.equals(that.createTime)) {
             return false;
         }
@@ -236,7 +324,7 @@ public class DqsResult {
     public String toString() {
         return "DqsResult{" +
                 "id=" + id +
-                ", processDefinedId=" + processDefinedId +
+                ", processDefinitionId=" + processDefinitionId +
                 ", taskInstanceId='" + taskInstanceId + '\'' +
                 ", ruleType='" + ruleType + '\'' +
                 ", statisticsValue=" + statisticsValue +
@@ -245,6 +333,8 @@ public class DqsResult {
                 ", threshold='" + threshold + '\'' +
                 ", operator=" + operator +
                 ", failureStrategy=" + failureStrategy +
+                ", userId=" + userId +
+                ", state=" + state +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 '}';

@@ -17,10 +17,33 @@
 package org.apache.dolphinscheduler.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.dolphinscheduler.dao.entity.DqsResult;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Date;
 
 /**
  * DqsResultMapper
  */
 public interface DqsResultMapper extends BaseMapper<DqsResult> {
+
+    /**
+     * process definition page
+     *
+     * @param page page
+     * @param searchVal searchVal
+     * @param userId userId
+     * @param statusArray states
+     * @param ruleType ruleType
+     * @param startTime startTime
+     * @return endTime endTime
+     */
+    IPage<DqsResult> queryResultListPaging(IPage<DqsResult> page,
+                                                   @Param("searchVal") String searchVal,
+                                                   @Param("userId") int userId,
+                                                   @Param("states") int[] statusArray,
+                                                   @Param("ruleType") int ruleType,
+                                                   @Param("startTime") Date startTime,
+                                                   @Param("endTime") Date endTime);
 }

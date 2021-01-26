@@ -16,34 +16,44 @@
  */
 package org.apache.dolphinscheduler.server.worker.task.dqs.rule.parser;
 
-import org.apache.dolphinscheduler.common.utils.ParameterUtils;
+import org.apache.dolphinscheduler.common.task.dqs.rule.RuleDefinition;
 import org.apache.dolphinscheduler.server.entity.DataQualityTaskExecutionContext;
 import org.apache.dolphinscheduler.server.utils.RuleParserUtils;
-import org.apache.dolphinscheduler.common.task.dqs.rule.RuleDefinition;
-import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parameter.*;
+import org.apache.dolphinscheduler.server.worker.task.dqs.rule.RuleManager;
+import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parameter.ConnectorParameter;
+import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parameter.DataQualityConfiguration;
+import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parameter.ExecutorParameter;
+import org.apache.dolphinscheduler.server.worker.task.dqs.rule.parameter.WriterParameter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.dolphinscheduler.server.worker.task.dqs.rule.RuleManager.MULTI_TABLE_COMPARISON_WRITER_SQL;
-
 /**
- * MultiTableComparisonRuleParser
+ * SingleTableCustomSqlRuleParser
  */
-public class MultiTableComparisonRuleParser implements IRuleParser {
+public class SingleTableCustomSqlRuleParser implements IRuleParser {
 
     @Override
     public DataQualityConfiguration parse(RuleDefinition ruleDefinition,
                                           Map<String, String> inputParameterValue,
                                           DataQualityTaskExecutionContext dataQualityTaskExecutionContext) throws Exception {
+        int index = 1;
 
         List<ConnectorParameter> connectorParameterList =
                 RuleParserUtils.getConnectorParameterList(inputParameterValue,dataQualityTaskExecutionContext);
         List<ExecutorParameter> executorParameterList = new ArrayList<>();
 
+        //replace the placeholder in execute sql list
+        index = RuleParserUtils.replaceExecuteSqlPlaceholder(ruleDefinition, index, inputParameterValue, executorParameterList);
+
         List<WriterParameter> writerParameterList = RuleParserUtils.getWriterParameterList(
-                ParameterUtils.convertParameterPlaceholders(MULTI_TABLE_COMPARISON_WRITER_SQL,inputParameterValue),
-                dataQualityTaskExecutionContext);
+                ruleDefinition,
+                index,
+                inputParameterValue,
+                executorParameterList,
+                dataQualityTaskExecutionContext,
+                RuleManager.SINGLE_TABLE_CUSTOM_SQL_WRITER_SQL
+        );
 
         return new DataQualityConfiguration(
                 ruleDefinition.getRuleName(),

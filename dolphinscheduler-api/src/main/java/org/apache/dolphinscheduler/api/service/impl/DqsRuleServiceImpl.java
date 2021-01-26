@@ -27,7 +27,6 @@ import org.apache.dolphinscheduler.api.service.BaseService;
 import org.apache.dolphinscheduler.api.service.DqsRuleService;
 import org.apache.dolphinscheduler.api.utils.PageInfo;
 import org.apache.dolphinscheduler.common.Constants;
-import org.apache.dolphinscheduler.common.enums.ComparisonValueType;
 import org.apache.dolphinscheduler.common.enums.DbType;
 import org.apache.dolphinscheduler.common.enums.OptionSourceType;
 import org.apache.dolphinscheduler.common.form.CascaderParamsOptions;
@@ -39,8 +38,7 @@ import org.apache.dolphinscheduler.common.form.type.CascaderParam;
 import org.apache.dolphinscheduler.common.form.type.InputParam;
 import org.apache.dolphinscheduler.common.form.type.RadioParam;
 import org.apache.dolphinscheduler.common.form.type.SelectParam;
-import org.apache.dolphinscheduler.common.task.dqs.rule.CalculateComparisonValueParameter;
-import org.apache.dolphinscheduler.common.task.dqs.rule.FixedComparisonValueParameter;
+import org.apache.dolphinscheduler.common.task.dqs.rule.ComparisonParameter;
 import org.apache.dolphinscheduler.common.task.dqs.rule.RuleDefinition;
 import org.apache.dolphinscheduler.common.task.dqs.rule.RuleInputEntry;
 import org.apache.dolphinscheduler.common.utils.CollectionUtils;
@@ -218,20 +216,12 @@ public class DqsRuleServiceImpl extends BaseService  implements DqsRuleService {
         }
 
         List<RuleInputEntry> allInputEntryList = new ArrayList<>(defaultInputEntryList);
-        if(ComparisonValueType.CALCULATE_VALUE == ruleDefinition.getComparisonValueType()){
-            CalculateComparisonValueParameter calculateComparisonValueParameter =
-                    JSONUtils.parseObject(ruleDefinition.getComparisonParameter(),CalculateComparisonValueParameter.class);
-            if(calculateComparisonValueParameter != null){
-                allInputEntryList.addAll(calculateComparisonValueParameter.getInputEntryList());
-            }
 
-        }else if(ComparisonValueType.FIXED_VALUE == ruleDefinition.getComparisonValueType()){
-            FixedComparisonValueParameter fixedComparisonValueParameter =
-                    JSONUtils.parseObject(ruleDefinition.getComparisonParameter(),FixedComparisonValueParameter.class);
-            if(fixedComparisonValueParameter != null){
-                allInputEntryList.addAll(fixedComparisonValueParameter.getInputEntryList());
-            }
+        ComparisonParameter comparisonParameter = ruleDefinition.getComparisonParameter();
+        if(comparisonParameter != null){
+            allInputEntryList.addAll(comparisonParameter.getInputEntryList());
         }
+
 
         allInputEntryList.addAll(checkInputEntryList);
 

@@ -17,16 +17,28 @@
 package org.apache.dolphinscheduler.api.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.dolphinscheduler.api.enums.Status;
 import org.apache.dolphinscheduler.api.service.BaseService;
 import org.apache.dolphinscheduler.api.service.DqsResultService;
+import org.apache.dolphinscheduler.api.utils.PageInfo;
 import org.apache.dolphinscheduler.common.Constants;
+import org.apache.dolphinscheduler.common.enums.RuleType;
+import org.apache.dolphinscheduler.common.utils.DateUtils;
+import org.apache.dolphinscheduler.common.utils.StringUtils;
 import org.apache.dolphinscheduler.dao.entity.DqsResult;
+import org.apache.dolphinscheduler.dao.entity.User;
 import org.apache.dolphinscheduler.dao.mapper.DqsResultMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.apache.dolphinscheduler.common.Constants.DATA_LIST;
 
 /**
  * DqsResultServiceImpl
@@ -49,4 +61,57 @@ public class DqsResultServiceImpl extends BaseService  implements DqsResultServi
         putMsg(result, Status.SUCCESS);
         return result;
     }
+
+    @Override
+    public Map<String, Object> queryDefineListPaging(User loginUser,
+                                                     String searchVal,
+                                                     Integer state,
+                                                     Integer ruleType,
+                                                     String startTime,
+                                                     String endTime,Integer pageNo, Integer pageSize) {
+        Map<String, Object> result = new HashMap<>();
+        int[] statusArray = null;
+        // filter by state
+        if (state != null) {
+            statusArray = new int[]{state};
+        }
+
+        Date start = null;
+        Date end = null;
+        try {
+            if (StringUtils.isNotEmpty(startTime)) {
+                start = DateUtils.getScheduleDate(startTime);
+            }
+            if (StringUtils.isNotEmpty(endTime)) {
+                end = DateUtils.getScheduleDate(endTime);
+            }
+        } catch (Exception e) {
+            putMsg(result, Status.REQUEST_PARAMS_NOT_VALID_ERROR, "startTime,endTime");
+            return result;
+        }
+
+        Page<DqsResult> page = new Page<>(pageNo, pageSize);
+        PageInfo<DqsResult> pageInfo = new PageInfo<>(pageNo, pageSize);
+
+        if(ruleType == null){
+            ruleType = -1;
+        }
+
+        IPage<DqsResult> dqsResultPage =
+                dqsResultMapper.queryResultListPaging(
+                        page,
+                        searchVal,
+                        loginUser.getId(),
+                        statusArray,
+                        ruleType,
+                        start,
+                        end);
+
+        pageInfo.setTotalCount((int) dqsResultPage.getTotal());
+        pageInfo.setLists(dqsResultPage.getRecords());
+        result.put(DATA_LIST, pageInfo);
+        putMsg(result, Status.SUCCESS);
+        return result;
+    }
+
 }

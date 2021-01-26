@@ -21,6 +21,7 @@ import org.apache.dolphinscheduler.common.enums.*;
 import org.apache.dolphinscheduler.common.thread.Stopper;
 import org.apache.dolphinscheduler.common.utils.JSONUtils;
 import org.apache.dolphinscheduler.dao.entity.DqsResult;
+import org.apache.dolphinscheduler.dao.entity.ProcessDefinition;
 import org.apache.dolphinscheduler.dao.entity.TaskInstance;
 import org.apache.dolphinscheduler.remote.command.DBTaskAckCommand;
 import org.apache.dolphinscheduler.remote.command.DBTaskResponseCommand;
@@ -165,6 +166,7 @@ public class TaskResponseService {
 
                         //add dqs result operate
                         if(TaskType.DATA_QUALITY == TaskType.valueOf(taskInstance.getTaskType())){
+                            processService.updateDqsResultUserId(taskResponseEvent.getTaskInstanceId());
                             //get the dqs result by task instance id
                             DqsResult dqsResult = processService.getDqsResultByTaskInstanceId(taskResponseEvent.getTaskInstanceId());
                             logger.info("DQS Task Result : "+JSONUtils.toJsonString(dqsResult));
@@ -180,9 +182,11 @@ public class TaskResponseService {
                                 OperatorType operatorType = OperatorType.of(dqsResult.getOperator());
 
                                 if(operatorType != null){
-                                    if(CheckType.FIXED_VALUE == checkType){
+                                    if(CheckType.STATISTICS_COMPARE_FIXED_VALUE == checkType){
                                         isFailure = getCompareResult(operatorType,statisticsValue,threshold);
-                                    }else if(CheckType.PERCENTAGE == checkType){
+                                    }else if(CheckType.STATISTICS_COMPARE_COMPARISON == checkType){
+                                        isFailure = getCompareResult(operatorType,statisticsValue,comparisonValue);
+                                    }else if(CheckType.STATISTICS_COMPARISON_PERCENTAGE == checkType){
                                         isFailure = getCompareResult(operatorType,statisticsValue/comparisonValue *100,threshold);
                                     }
                                 }
@@ -209,7 +213,12 @@ public class TaskResponseService {
                                                 break;
                                         }
                                     }
+                                    dqsResult.setState(2);
+                                }else{
+                                    dqsResult.setState(1);
                                 }
+
+                                processService.updateDqsResultState(dqsResult);
                             }
                         }
 

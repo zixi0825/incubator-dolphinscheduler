@@ -16,6 +16,13 @@
  */
 package org.apache.dolphinscheduler.api.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import org.apache.dolphinscheduler.common.enums.RuleType;
+import org.apache.dolphinscheduler.dao.entity.DqsResult;
+import org.apache.dolphinscheduler.dao.entity.User;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -24,4 +31,12 @@ import java.util.Map;
 public interface DqsResultService {
 
     Map<String, Object> getByTaskInstanceId(int taskInstanceId);
+
+    Map<String, Object> queryDefineListPaging(User loginUser,
+                                              String searchVal,
+                                              Integer state,
+                                              Integer ruleType,
+                                              String startTime,
+                                              String endTime,
+                                              Integer pageNo, Integer pageSize);
 }

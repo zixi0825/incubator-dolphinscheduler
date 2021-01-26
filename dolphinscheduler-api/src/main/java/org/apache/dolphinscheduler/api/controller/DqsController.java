@@ -24,6 +24,7 @@ import org.apache.dolphinscheduler.api.service.DqsResultService;
 import org.apache.dolphinscheduler.api.service.DqsRuleService;
 import org.apache.dolphinscheduler.api.utils.Result;
 import org.apache.dolphinscheduler.common.Constants;
+import org.apache.dolphinscheduler.common.enums.RuleType;
 import org.apache.dolphinscheduler.common.utils.ParameterUtils;
 import org.apache.dolphinscheduler.dao.entity.DqsRule;
 import org.apache.dolphinscheduler.dao.entity.User;
@@ -67,9 +68,6 @@ public class DqsController extends BaseController {
     public Result getRuleFormCreateJsonById(@ApiIgnore @RequestAttribute(value = Constants.SESSION_USER) User loginUser,
                               @RequestParam(value = "ruleId") int ruleId){
 
-
-        //根據ID拿到rule的所有數據
-        //按照form-create要求的格式返回給前端
         Map<String, Object> result = dqsRuleService.getRuleFormCreateJsonById(ruleId);
         return returnDataList(result);
     }
@@ -185,12 +183,46 @@ public class DqsController extends BaseController {
     @ResponseStatus(HttpStatus.OK)
     @ApiException(QUERY_PROCESS_DEFINITION_LIST_PAGING_ERROR)
     public Result queryRuleList() {
-        Map<String, Object> result = new HashMap<>();
-        result = dqsRuleService.queryAllRuleList();
+        Map<String, Object> result = dqsRuleService.queryAllRuleList();
         return returnDataList(result);
     }
-    //获取规则类型模板列表
 
+    /**
+     * query rule list paging
+     *
+     * @param loginUser login user
+     * @param searchVal search value
+     * @param pageNo page number
+     * @param pageSize page size
+     * @return rule page
+     */
+    @ApiOperation(value = "queryRuleListPaging", notes = "QUERY_RULE_LIST_PAGING_NOTES")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNo", value = "PAGE_NO", required = true, dataType = "Int", example = "100"),
+            @ApiImplicitParam(name = "searchVal", value = "SEARCH_VAL", required = false, type = "String"),
+            @ApiImplicitParam(name = "userId", value = "USER_ID", required = false, dataType = "Int", example = "100"),
+            @ApiImplicitParam(name = "pageSize", value = "PAGE_SIZE", required = true, dataType = "Int", example = "100")
+    })
+    @GetMapping(value = "/result/page")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiException(QUERY_PROCESS_DEFINITION_LIST_PAGING_ERROR)
+    public Result queryDqsResultPaging(@ApiIgnore @RequestAttribute(value = Constants.SESSION_USER) User loginUser,
+                                       @RequestParam(value = "searchVal", required = false) String searchVal,
+                                       @RequestParam(value = "ruleType", required = false) Integer ruleType,
+                                       @RequestParam(value = "state", required = false) Integer state,
+                                       @RequestParam(value = "startDate", required = false) String startTime,
+                                       @RequestParam(value = "endDate", required = false) String endTime,
+                                       @RequestParam("pageNo") Integer pageNo,
+                                       @RequestParam("pageSize") Integer pageSize) {
+        logger.info("query dqs result paging, login user:{}", loginUser.getUserName());
+        Map<String, Object> result = checkPageParams(pageNo, pageSize);
+        if (result.get(Constants.STATUS) != Status.SUCCESS) {
+            return returnDataListPaging(result);
+        }
+        searchVal = ParameterUtils.handleEscapes(searchVal);
+        result = dqsResultService.queryDefineListPaging(loginUser, searchVal, state, ruleType, startTime, endTime, pageNo, pageSize);
+        return returnDataListPaging(result);
+    }
 
 
 

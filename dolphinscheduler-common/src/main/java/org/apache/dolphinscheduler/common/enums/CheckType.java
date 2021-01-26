@@ -24,11 +24,13 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum CheckType{
     /**
-     * 0-fixed_value
-     * 1-percentage
+     * 0-statistics_compare_fixed_value
+     * 1-statistics_compare_comparison
+     * 2-statistics_comparison_percentage
      */
-    FIXED_VALUE(0,"fixed_value"),
-    PERCENTAGE(1,"percentage");
+    STATISTICS_COMPARE_FIXED_VALUE(0,"statistics_compare_fixed_value"),
+    STATISTICS_COMPARE_COMPARISON(1,"statistics_compare_comparison"),
+    STATISTICS_COMPARISON_PERCENTAGE(2,"statistics_comparison_percentage");
 
     CheckType(int code, String description){
         this.code = code;

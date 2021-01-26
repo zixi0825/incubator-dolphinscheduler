@@ -1969,8 +1969,28 @@ public class ProcessService {
     }
 
     public DqsResult getDqsResultByTaskInstanceId(int taskInstanceId){
-        return
+        return dqsResultMapper.selectOne(new QueryWrapper<DqsResult>().eq("task_instance_id",taskInstanceId));
+    }
+
+    public int updateDqsResultUserId(int taskInstanceId){
+        DqsResult dqsResult =
                 dqsResultMapper.selectOne(new QueryWrapper<DqsResult>().eq("task_instance_id",taskInstanceId));
+        if(dqsResult == null){
+            return -1;
+        }
+
+        ProcessDefinition processDefinition = processDefineMapper.selectById(dqsResult.getProcessDefinitionId());
+        if(processDefinition == null){
+            return -1;
+        }
+
+        dqsResult.setUserId(processDefinition.getUserId());
+        dqsResult.setState(0);
+        return dqsResultMapper.updateById(dqsResult);
+    }
+
+    public int updateDqsResultState(DqsResult dqsResult){
+        return dqsResultMapper.updateById(dqsResult);
     }
 
 }

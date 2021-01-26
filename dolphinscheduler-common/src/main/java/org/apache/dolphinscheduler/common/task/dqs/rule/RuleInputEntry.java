@@ -60,12 +60,12 @@ public class RuleInputEntry{
     /**
      * the source type of options，use default options or other
      */
-    private OptionSourceType optionSourceType;
+    private OptionSourceType optionSourceType = OptionSourceType.DEFAULT;
 
     /**
      * input entry type: string，array，number .etc
      */
-    private ValueType valueType;
+    private ValueType valueType = ValueType.NUMBER;
 
     /**
      * whether to display on the front end
@@ -75,7 +75,7 @@ public class RuleInputEntry{
     /**
      * input entry type: default,statistics,comparison
      */
-    private InputType inputType;
+    private InputType inputType = InputType.DEFAULT;
 
     /**
      * whether to edit on the front end

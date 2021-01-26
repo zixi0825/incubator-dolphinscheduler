@@ -14,32 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.dolphinscheduler.common.task.dqs.rule;
-
-import java.util.List;
-
-/**
- * CalculateComparisonValueParameter
- */
-public class CalculateComparisonValueParameter {
-
-    private List<RuleInputEntry> inputEntryList;
-
-    private List<ExecuteSqlDefinition> comparisonExecuteSqlList;
-
-    public List<RuleInputEntry> getInputEntryList() {
-    return inputEntryList;
+<template>
+  <div class="main-layout-box">
+    <m-secondary-menu :type="'dataQuality'"></m-secondary-menu>
+    <router-view></router-view>
+  </div>
+</template>
+<script>
+  import mSecondaryMenu from '@/module/components/secondaryMenu/secondaryMenu'
+  export default {
+    name: 'data-quality-index',
+    mounted () {
+    },
+    components: { mSecondaryMenu }
   }
-
-    public void setInputEntryList(List<RuleInputEntry> inputEntryList) {
-    this.inputEntryList = inputEntryList;
-  }
-
-    public List<ExecuteSqlDefinition> getComparisonExecuteSqlList() {
-        return comparisonExecuteSqlList;
-    }
-
-    public void setComparisonExecuteSqlList(List<ExecuteSqlDefinition> comparisonExecuteSqlList) {
-        this.comparisonExecuteSqlList = comparisonExecuteSqlList;
-    }
-}
+</script>

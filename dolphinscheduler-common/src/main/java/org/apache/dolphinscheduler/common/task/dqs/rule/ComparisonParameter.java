@@ -14,44 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.dolphinscheduler.server.worker.task.dqs.rule.parameter;
+package org.apache.dolphinscheduler.common.task.dqs.rule;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Map;
+import java.util.List;
 
 /**
- * SparkParameter
+ * ComparisonParameter
  */
-public class SparkParameter  {
+public class ComparisonParameter {
 
-    @JsonProperty("log.level")
-    private String logLevel;
+    private List<RuleInputEntry> inputEntryList;
 
-    @JsonProperty("config")
-    private Map<String, String> config;
+    private List<ExecuteSqlDefinition> comparisonExecuteSqlList;
 
-    public SparkParameter() {
+    public List<RuleInputEntry> getInputEntryList() {
+    return inputEntryList;
+  }
+
+    public void setInputEntryList(List<RuleInputEntry> inputEntryList) {
+    this.inputEntryList = inputEntryList;
+  }
+
+    public List<ExecuteSqlDefinition> getComparisonExecuteSqlList() {
+        return comparisonExecuteSqlList;
     }
 
-    public SparkParameter(String logLevel,Map<String, String> config) {
-        this.logLevel = logLevel;
-        this.config = config;
+    public void setComparisonExecuteSqlList(List<ExecuteSqlDefinition> comparisonExecuteSqlList) {
+        this.comparisonExecuteSqlList = comparisonExecuteSqlList;
     }
-
-    public String getLogLevel() {
-        return logLevel;
-    }
-
-    public void setLogLevel(String logLevel) {
-        this.logLevel = logLevel;
-    }
-
-    public Map<String, String> getConfig() {
-        return config;
-    }
-
-    public void setConfig(Map<String, String> config) {
-        this.config = config;
-    }
-
 }

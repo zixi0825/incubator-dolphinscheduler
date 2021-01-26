@@ -199,6 +199,135 @@ const menu = {
       disabled: Permissions.getAuth()
     }
   ],
+  dataQuality: [
+    {
+      name: `${i18n.$t('Dqs Result List')}`,
+      id: 3,
+      path: 'dqs-result-list',
+      isOpen: true,
+      disabled: true,
+      icon: 'fa-recycle',
+      children: []
+    }
+  ],
+  security: [
+    {
+      name: `${i18n.$t('Tenant Manage')}`,
+      id: 0,
+      path: 'tenement-manage',
+      isOpen: true,
+      disabled: true,
+      icon: 'el-icon-user-solid',
+      children: []
+    },
+    {
+      name: `${i18n.$t('User Manage')}`,
+      id: 1,
+      path: 'users-manage',
+      isOpen: true,
+      disabled: true,
+      icon: 'el-icon-user-solid',
+      children: []
+    },
+    {
+      name: `${i18n.$t('Warning group manage')}`,
+      id: 2,
+      path: 'warning-groups-manage',
+      isOpen: true,
+      disabled: true,
+      icon: 'el-icon-warning',
+      children: []
+    },
+    {
+      name: `${i18n.$t('Worker group manage')}`,
+      id: 4,
+      path: 'worker-groups-manage',
+      isOpen: true,
+      disabled: true,
+      icon: 'el-icon-s-custom',
+      children: []
+    },
+    {
+      name: `${i18n.$t('Queue manage')}`,
+      id: 3,
+      path: 'queue-manage',
+      isOpen: true,
+      disabled: true,
+      icon: 'fa-recycle',
+      children: []
+    },
+    {
+      name: `${i18n.$t('Token manage')}`,
+      id: 2,
+      path: 'token-manage',
+      isOpen: true,
+      icon: 'el-icon-document',
+      children: [],
+      disabled: true
+    }
+  ],
+  resource: [
+    {
+      name: `${i18n.$t('File Manage')}`,
+      id: 0,
+      path: 'file',
+      isOpen: true,
+      icon: 'el-icon-document-copy',
+      children: [],
+      disabled: true
+    },
+    {
+      name: `${i18n.$t('UDF manage')}`,
+      id: 1,
+      path: '',
+      isOpen: true,
+      icon: 'el-icon-document',
+      disabled: true,
+      children: [
+        {
+          name: `${i18n.$t('Resource manage')}`,
+          path: 'resource-udf',
+          id: 0,
+          disabled: true
+        },
+        {
+          name: `${i18n.$t('Function manage')}`,
+          path: 'resource-func',
+          id: 1,
+          disabled: true
+        }
+      ]
+    }
+  ],
+  user: [
+    {
+      name: `${i18n.$t('User Information')}`,
+      id: 0,
+      path: 'account',
+      isOpen: true,
+      icon: 'el-icon-user-solid',
+      children: [],
+      disabled: true
+    },
+    {
+      name: `${i18n.$t('Edit password')}`,
+      id: 1,
+      path: 'password',
+      isOpen: true,
+      icon: 'el-icon-key',
+      children: [],
+      disabled: true
+    },
+    {
+      name: `${i18n.$t('Token manage')}`,
+      id: 2,
+      path: 'token',
+      isOpen: true,
+      icon: 'el-icon-s-custom',
+      children: [],
+      disabled: Permissions.getAuth()
+    }
+  ],
   monitor: [
     {
       name: `${i18n.$t('Servers manage')}`,

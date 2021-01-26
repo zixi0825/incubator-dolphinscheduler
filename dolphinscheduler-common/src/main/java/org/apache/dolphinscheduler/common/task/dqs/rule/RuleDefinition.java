@@ -16,7 +16,6 @@
  */
 package org.apache.dolphinscheduler.common.task.dqs.rule;
 
-import org.apache.dolphinscheduler.common.enums.ComparisonValueType;
 import org.apache.dolphinscheduler.common.enums.RuleType;
 
 import java.util.List;
@@ -46,14 +45,8 @@ public class RuleDefinition{
      * statistics execute sql list
      */
     private List<ExecuteSqlDefinition> statisticsExecuteSqlList;
-    /**
-     * comparison value type
-     */
-    private ComparisonValueType comparisonValueType;
-    /**
-     * comparison rule parameter
-     */
-    private String comparisonParameter;
+
+    private ComparisonParameter comparisonParameter;
 
     public String getRuleName() {
         return ruleName;
@@ -95,19 +88,12 @@ public class RuleDefinition{
         this.statisticsExecuteSqlList = statisticsExecuteSqlList;
     }
 
-    public ComparisonValueType getComparisonValueType() {
-        return comparisonValueType;
-    }
-
-    public void setComparisonValueType(ComparisonValueType comparisonValueType) {
-        this.comparisonValueType = comparisonValueType;
-    }
-
-    public String getComparisonParameter() {
+    public ComparisonParameter getComparisonParameter() {
         return comparisonParameter;
     }
 
-    public void setComparisonParameter(String comparisonParameter) {
+    public void setComparisonParameter(ComparisonParameter comparisonParameter) {
         this.comparisonParameter = comparisonParameter;
     }
+
 }
