@@ -315,10 +315,130 @@ const tasksType = {
   }
 }
 
+const dqsTaskState = [
+  {
+    id: 0,
+    desc: `${i18n.$t('Default')}`,
+    code: 0
+  },
+  {
+    id: 1,
+    desc: `${i18n.$t('Success')}`,
+    code: 1
+  },
+  {
+    id: 2,
+    desc: `${i18n.$t('Failure')}`,
+    code: 2
+  }
+]
+
+const operator = [
+  {
+    id: 0,
+    desc: `=`,
+    code: 0
+  },
+  {
+    id: 1,
+    desc: `<`,
+    code: 1
+  },
+  {
+    id: 2,
+    desc: `<=`,
+    code: 2
+  },
+  {
+    id: 3,
+    desc: `>`,
+    code: 3
+  },
+  {
+    id: 4,
+    desc: `>=`,
+    code: 4
+  },
+  {
+    id: 5,
+    desc: `!=`,
+    code: 5
+  }
+]
+
+const ruleType = [
+  {
+    id: 0,
+    desc: `${i18n.$t('Single Table')}`,
+    code: 0
+  },
+  {
+    id: 1,
+    desc: `${i18n.$t('Single Table Custon Sql')}`,
+    code: 1
+  },
+  {
+    id: 2,
+    desc: `${i18n.$t('Multi Table Accuracy')}`,
+    code: 2
+  },
+  {
+    id: 3,
+    desc: `${i18n.$t('Multi Table Comparison')}`,
+    code: 3
+  }
+]
+
+const checkType = [
+  {
+    id: 0,
+    desc: `${i18n.$t('Statistics Compare Fixed Value')}`,
+    code: 0
+  },
+  {
+    id: 1,
+    desc: `${i18n.$t('Statistics Compare Comparsion')}`,
+    code: 1
+  },
+  {
+    id: 2,
+    desc: `${i18n.$t('Statistics Comparison Percentage')}`,
+    code: 2
+  }
+]
+
+const failureStrategy = [
+  {
+    id: 0,
+    desc: `${i18n.$t('End')}`,
+    code: 0
+  },
+  {
+    id: 1,
+    desc: `${i18n.$t('Continue')}`,
+    code: 1
+  },
+  {
+    id: 2,
+    desc: `${i18n.$t('End And Alert')}`,
+    code: 2
+  },
+  {
+    id: 3,
+    desc: `${i18n.$t('Continue And Alert')}`,
+    code: 3
+  }
+]
+
 export {
   toolOper,
   publishStatus,
   runningType,
   tasksState,
-  tasksType
+  tasksType,
+  dqsTaskState,
+  operator,
+  ruleType,
+  checkType,
+  failureStrategy
 }

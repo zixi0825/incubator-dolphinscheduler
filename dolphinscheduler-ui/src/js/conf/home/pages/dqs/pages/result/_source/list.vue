@@ -21,13 +21,36 @@
         <el-table-column type="index" :label="$t('#')" width="50"></el-table-column>
         <el-table-column prop="processDefinitionName" :label="$t('Process Name')"></el-table-column>
         <el-table-column prop="taskName" :label="$t('Task Name')"></el-table-column>
-        <el-table-column prop="ruleName" :label="$t('Rule Name')"></el-table-column>
-        <el-table-column prop="userName" :label="$t('User Name')"></el-table-column>
-        <!-- <el-table-column :label="$t('State')" width="50">
+        <el-table-column :label="$t('Rule Type')" width="120">
           <template slot-scope="scope">
-            <span v-html="_rtState(scope.row.state)" style="cursor: pointer;"></span>
+            {{_rtRuleType(scope.row.ruleType)}}
           </template>
-        </el-table-column> -->
+        </el-table-column>
+        <el-table-column prop="ruleName" :label="$t('Rule Name')"></el-table-column>
+        <el-table-column :label="$t('State')" width="100">
+          <template slot-scope="scope">
+            {{_rtTaskState(scope.row.state)}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="statisticsValue" :label="$t('Statistics Value')"></el-table-column>
+        <el-table-column prop="comparisonValue" :label="$t('Comparison Value')"></el-table-column>
+        <el-table-column :label="$t('Check Type')" width="200">
+          <template slot-scope="scope">
+            {{_rtCheckType(scope.row.checkType)}}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('Operator')" width="100">
+          <template slot-scope="scope">
+            {{_rtOperator(scope.row.operator)}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="threshold" :label="$t('Threshold')"></el-table-column>
+        <el-table-column :label="$t('Failure Strategy')" width="120">
+          <template slot-scope="scope">
+            {{_rtFailureStrategy(scope.row.failureStrategy)}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="userName" :label="$t('User Name')"></el-table-column>
         <el-table-column :label="$t('Create Time')" min-width="120">
           <template slot-scope="scope">
             <span>{{scope.row.createTime | formatDate}}</span>
@@ -50,7 +73,7 @@
   </div>
 </template>
 <script>
-  import { tasksState } from '@/conf/home/pages/dag/_source/config'
+  import { dqsTaskState,checkType,ruleType,operator,failureStrategy } from '@/conf/home/pages/dag/_source/config'
   export default {
     name: 'result-list',
     data () {
@@ -64,10 +87,21 @@
       pageSize: Number
     },
     methods: {
-      _rtState (code) {
-        let o = tasksState[code]
-        return `<em class="${o.icoUnicode} ${o.isSpin ? 'as as-spin' : ''}" style="color:${o.color}" data-toggle="tooltip" data-container="body" title="${o.desc}"></em>`
-      }
+      _rtTaskState (code) {
+        return _.filter(dqsTaskState, v => v.code === code)[0].desc
+      },
+       _rtCheckType (code) {
+        return _.filter(checkType, v => v.code === code)[0].desc
+      },
+       _rtRuleType (code) {
+        return _.filter(ruleType, v => v.code === code)[0].desc
+      },
+       _rtOperator (code) {
+        return _.filter(operator, v => v.code === code)[0].desc
+      },
+       _rtFailureStrategy (code) {
+        return _.filter(failureStrategy, v => v.code === code)[0].desc
+      },
     },
     watch: {
       resultList (a) {

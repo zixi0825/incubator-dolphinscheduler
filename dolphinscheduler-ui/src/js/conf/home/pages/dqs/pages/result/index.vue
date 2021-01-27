@@ -15,26 +15,18 @@
  * limitations under the License.
  */
 <template>
+<div class="wrap-result">
   <m-list-construction :title="$t('Dqs Result List')">
-    <!-- <template slot="conditions">
-      <m-conditions @on-conditions="_onConditions">
-        <template slot="button-group" v-if="isADMIN">
-          <el-button size="mini" @click="_create('')">{{$t('Create queue')}}</el-button>
-          <el-dialog
-            :visible.sync="createQueueDialog"
-            width="auto">
-            <m-create-queue :item="item" @onUpdate="onUpdate" @close="close"></m-create-queue>
-          </el-dialog>
-        </template>
-      </m-conditions>
-    </template> -->
+    <template slot="conditions">
+        <m-result-conditions @on-query="_onQuery"></m-result-conditions>
+    </template>
+
     <template slot="content">
       <template v-if="resultList.length || total>0">
         <m-list @on-edit="_onEdit"
                 :result-list="resultList"
                 :page-no="searchParams.pageNo"
                 :page-size="searchParams.pageSize">
-
         </m-list>
         <div class="page-box">
           <el-pagination
@@ -55,6 +47,7 @@
       <m-spin :is-spin="isLoading" :is-left="isLeft"></m-spin>
     </template>
   </m-list-construction>
+</div>
 </template>
 <script>
   import _ from 'lodash'
@@ -64,7 +57,7 @@
   import mSpin from '@/module/components/spin/spin'
   import mNoData from '@/module/components/noData/noData'
   import listUrlParamHandle from '@/module/mixin/listUrlParamHandle'
-  import mConditions from '@/module/components/conditions/conditions'
+  import mResultConditions from '@/conf/home/pages/projects/pages/_source/conditions/dqs/result'
   import mListConstruction from '@/module/components/listConstruction/listConstruction'
 
   export default {
@@ -77,13 +70,19 @@
         searchParams: {
           pageSize: 10,
           pageNo: 1,
-          searchVal: ''
+          // state
+          state: '',
+          // start date
+          startDate: '',
+          // end date
+          endDate: '',
+          // search value
+          searchVal: '',
+          // host
+          ruleType: ''
         },
         isLeft: true,
-        isADMIN: store.state.user.userInfo.userType === 'ADMIN_USER',
-        item: {},
-        createQueueDialog: false
-
+        item: {}
       }
     },
     mixins: [listUrlParamHandle],
@@ -91,11 +90,10 @@
     methods: {
       ...mapActions('dqs', ['getResultListPage']),
       /**
-       * Query
+       * click query
        */
-      _onConditions (o) {
+      _onQuery (o) {
         this.searchParams = _.assign(this.searchParams, o)
-        this.searchParams.pageNo = 1
       },
       _page (val) {
         this.searchParams.pageNo = val
@@ -103,22 +101,6 @@
       _pageSize (val) {
         this.searchParams.pageSize = val
       },
-      _onEdit (item) {
-        this._create(item)
-      },
-      _create (item) {
-        this.item = item
-        this.createQueueDialog = true
-      },
-      onUpdate () {
-        this._debounceGET('false')
-        this.createQueueDialog = false
-      },
-
-      close () {
-        this.createQueueDialog = false
-      },
-
       _getList (flag) {
         if (sessionStorage.getItem('isLeft') === 0) {
           this.isLeft = false
@@ -154,6 +136,41 @@
     beforeDestroy () {
       sessionStorage.setItem('isLeft', 1)
     },
-    components: { mList, mListConstruction, mConditions, mSpin, mNoData }
+    components: { mList, mListConstruction, mResultConditions, mSpin, mNoData }
   }
 </script>
+<style lang="scss" rel="stylesheet/scss">
+  .wrap-result {
+    .table-box {
+      overflow-y: scroll;
+    }
+    .table-box {
+      .fixed {
+        table-layout: auto;
+        tr {
+          th:last-child,td:last-child {
+            background: inherit;
+            width: 60px;
+            height: 40px;
+            line-height: 40px;
+            border-left:1px solid #ecf3ff;
+            position: absolute;
+            right: 0;
+            z-index: 2;
+          }
+          td:last-child {
+            border-bottom:1px solid #ecf3ff;
+          }
+          th:nth-last-child(2) {
+            padding-right: 90px;
+          }
+        }
+      }
+    }
+    .list-model {
+      .el-dialog__header, .el-dialog__body {
+        padding: 0;
+      }
+    }
+  }
+ </style>

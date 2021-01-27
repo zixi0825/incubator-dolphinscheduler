@@ -21,6 +21,9 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.apache.dolphinscheduler.common.enums.CheckType;
+import org.apache.dolphinscheduler.common.enums.DqsTaskState;
+import org.apache.dolphinscheduler.common.enums.RuleType;
 
 import java.util.Date;
 import java.util.Map;
@@ -56,7 +59,7 @@ public class DqsResult {
      * rule_type
      */
     @TableField(value = "rule_type")
-    private int ruleType;
+    private RuleType ruleType;
     /**
      * rule_name
      */
@@ -76,7 +79,7 @@ public class DqsResult {
      * check_type
      */
     @TableField(value = "check_type")
-    private int checkType;
+    private CheckType checkType;
     /**
      * task_instance_id
      */
@@ -106,7 +109,7 @@ public class DqsResult {
      * state
      */
     @TableField(value = "state")
-    private int state;
+    private DqsTaskState state;
     /**
      * create_time
      */
@@ -144,13 +147,7 @@ public class DqsResult {
         this.taskInstanceId = taskInstanceId;
     }
 
-    public int getRuleType() {
-        return ruleType;
-    }
 
-    public void setRuleType(int ruleType) {
-        this.ruleType = ruleType;
-    }
 
     public String getRuleName() {
         return ruleName;
@@ -176,13 +173,7 @@ public class DqsResult {
         this.comparisonValue = comparisonValue;
     }
 
-    public int getCheckType() {
-        return checkType;
-    }
 
-    public void setCheckType(int checkType) {
-        this.checkType = checkType;
-    }
 
     public double getThreshold() {
         return threshold;
@@ -224,11 +215,27 @@ public class DqsResult {
         this.userName = userName;
     }
 
-    public int getState() {
+    public RuleType getRuleType() {
+        return ruleType;
+    }
+
+    public void setRuleType(RuleType ruleType) {
+        this.ruleType = ruleType;
+    }
+
+    public CheckType getCheckType() {
+        return checkType;
+    }
+
+    public void setCheckType(CheckType checkType) {
+        this.checkType = checkType;
+    }
+
+    public DqsTaskState getState() {
         return state;
     }
 
-    public void setState(int state) {
+    public void setState(DqsTaskState state) {
         this.state = state;
     }
 

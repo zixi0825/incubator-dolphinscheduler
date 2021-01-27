@@ -172,7 +172,7 @@ public class TaskResponseService {
                             logger.info("DQS Task Result : "+JSONUtils.toJsonString(dqsResult));
                             if(dqsResult != null){
                                 //check the result ,if result is failure do some operator by failure strategy
-                                CheckType checkType = CheckType.of(dqsResult.getCheckType());
+                                CheckType checkType = dqsResult.getCheckType();
 
                                 double statisticsValue = dqsResult.getStatisticsValue();
                                 double comparisonValue = dqsResult.getComparisonValue();
@@ -213,9 +213,9 @@ public class TaskResponseService {
                                                 break;
                                         }
                                     }
-                                    dqsResult.setState(2);
+                                    dqsResult.setState(DqsTaskState.FAILURE);
                                 }else{
-                                    dqsResult.setState(1);
+                                    dqsResult.setState(DqsTaskState.SUCCESS);
                                 }
 
                                 processService.updateDqsResultState(dqsResult);
