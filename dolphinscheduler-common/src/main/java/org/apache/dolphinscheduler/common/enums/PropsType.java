@@ -17,21 +17,44 @@
 
 package org.apache.dolphinscheduler.common.enums;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum PropsType {
 
-    INPUT("input"),
+    /**
+     *
+     */
+    TEXT(0,"text"),
+    PASSWORD(1,"password"),
+    TEXTAREA(2,"textarea");
 
-    PASSWORD("password"),
-
-    TEXTAREA("textarea");
-
-    private String propsType;
-
-    PropsType(String propsType) {
-        this.propsType = propsType;
+    PropsType(int code, String description){
+        this.code = code;
+        this.description = description;
     }
 
-    public String getPropsType() {
-        return this.propsType;
+    @EnumValue
+    private final int code;
+
+    private final String description;
+
+    public int getCode() {
+        return code;
+    }
+
+    @JsonValue
+    public String getDescription() {
+        return description;
+    }
+
+    public static PropsType of(int value){
+        for (PropsType e:PropsType.values()) {
+            if(e.ordinal() == value) {
+                return e;
+            }
+        }
+        //For values out of enum scope
+        return null;
     }
 }

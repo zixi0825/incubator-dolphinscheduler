@@ -173,7 +173,6 @@ public class DqsController extends BaseController {
         return returnDataListPaging(result);
     }
 
-
     /**
      * query all rule list
      * @return rule list
@@ -223,7 +222,4 @@ public class DqsController extends BaseController {
         result = dqsResultService.queryDefineListPaging(loginUser, searchVal, state, ruleType, startTime, endTime, pageNo, pageSize);
         return returnDataListPaging(result);
     }
-
-
-
 }

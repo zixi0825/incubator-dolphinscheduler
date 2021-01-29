@@ -28,7 +28,8 @@ public enum FormType{
   RADIO(1,"radio"),
   SELECT(2,"select"),
   SWITCH(3,"checkbox"),
-  CASCADER(4,"cascader");
+  CASCADER(4,"cascader"),
+  TEXTAREA(5,"textarea");
 
   FormType(int code, String description){
     this.code = code;

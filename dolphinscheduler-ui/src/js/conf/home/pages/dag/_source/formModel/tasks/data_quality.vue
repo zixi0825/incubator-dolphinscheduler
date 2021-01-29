@@ -238,8 +238,8 @@
                   window.setTimeout(() => {
                   var fields = this.fApi.fields();
                   fields.forEach(item =>{
-                      console.log(item)
-                      console.log(this.inputEntryValueMap[item])
+                      // console.log(item)
+                      // console.log(this.inputEntryValueMap[item])
                       this.fApi.setValue(item,this.inputEntryValueMap[item])
                     })
                   }, 1000);
@@ -325,12 +325,25 @@
         this.ruleJson = this.ruleMap.get(this.ruleId);
 
         var fields = this.fApi.fields();
+        try {
           fields.forEach(item =>{
             console.log(item)
-            console.log(this.inputEntryValueMap[item])
+            // console.log(this.inputEntryValueMap[item])
+            this.fApi.validateField(item,(errMsg)=>{
+                if(errMsg){
+                  console.log(errMsg)
+                  throw new Error(errMsg);
+                }
+            });
+            
             this.fApi.setValue(item,this.inputEntryValueMap[item])
+            
           })
-
+        } catch (error) {
+          this.$message.warning(error.message)
+          return false;
+        }
+        
         // storage
         this.$emit('on-params', {
           ruleId: this.ruleId,
@@ -405,5 +418,9 @@
   .form-box{
     margin-left: 13px;
     margin-right: 25px;
+  }
+  .form-box .el-form-item{
+    // margin-top: -5px;
+    margin-bottom: -1px
   }
 </style>

@@ -24,9 +24,11 @@ public enum ValueType{
    */
   STRING("string"),
   LIST("list"),
-  NUMBER("number");
+  NUMBER("number"),
+  LIKE_SQL("sql");
   
   private String valueType;
+
   ValueType(String valueType) {
       this.valueType = valueType;
   }

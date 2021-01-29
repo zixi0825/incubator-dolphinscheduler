@@ -29,6 +29,7 @@ import org.apache.dolphinscheduler.api.utils.PageInfo;
 import org.apache.dolphinscheduler.common.Constants;
 import org.apache.dolphinscheduler.common.enums.DbType;
 import org.apache.dolphinscheduler.common.enums.OptionSourceType;
+import org.apache.dolphinscheduler.common.enums.PropsType;
 import org.apache.dolphinscheduler.common.form.CascaderParamsOptions;
 import org.apache.dolphinscheduler.common.form.ParamsOptions;
 import org.apache.dolphinscheduler.common.form.PluginParams;
@@ -238,6 +239,7 @@ public class DqsRuleServiceImpl extends BaseService  implements DqsRuleService {
                                                              .build())
                                         .setProps(new InputParamsProps().setDisabled(!inputEntry.getCanEdit()))
                                         .setValue(inputEntry.getValue())
+                                        .setPlaceholder(inputEntry.getPlaceholder())
                                         .setSize("small")
                                         .build();
                         params.add(inputParam);
@@ -257,6 +259,7 @@ public class DqsRuleServiceImpl extends BaseService  implements DqsRuleService {
                                 .setParamsOptionsList(options)
                                 .setValue(inputEntry.getValue())
                                 .setSize("small")
+//                                .setPlaceholder(inputEntry.getPlaceholder())
                                 .build();
                         params.add(selectParam);
                         break;
@@ -311,10 +314,26 @@ public class DqsRuleServiceImpl extends BaseService  implements DqsRuleService {
                         CascaderParam cascaderParam = CascaderParam
                                 .newBuilder(inputEntry.getField(),inputEntry.getTitle())
                                 .setParamsOptionsList(cascaderOptions)
-                                .setValue(inputEntry.getValue())
+                                .setValue(Integer.valueOf(inputEntry.getValue()))
                                 .setSize("small")
                                 .build();
                         params.add(cascaderParam);
+                        break;
+
+                    case TEXTAREA:
+                        InputParam textareaParam = InputParam
+                                .newBuilder(inputEntry.getField(),inputEntry.getTitle())
+                                .addValidate(Validate.newBuilder()
+                                        .setRequired(true)
+                                        .build())
+                                .setProps(new InputParamsProps().setDisabled(!inputEntry.getCanEdit()))
+                                .setValue(inputEntry.getValue())
+                                .setSize("small")
+                                .setType(PropsType.TEXTAREA)
+                                .setRows(1)
+                                .setPlaceholder(inputEntry.getPlaceholder())
+                                .build();
+                        params.add(textareaParam);
                         break;
                     default:
                         break;

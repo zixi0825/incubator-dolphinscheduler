@@ -147,9 +147,9 @@ public class RuleManager {
     }
 
     public static void main(String[] args) throws Exception{
-//        testMultiTableAccuracy();
-//        testMultiTableComparison();
-//        testSingleTable();
+        testMultiTableAccuracy();
+        testMultiTableComparison();
+        testSingleTable();
         testSingleTableCustomSql();
     }
 
@@ -179,6 +179,7 @@ public class RuleManager {
         srcDatasourceId.setType(FormType.CASCADER);
         srcDatasourceId.setCanEdit(true);
         srcDatasourceId.setShow(true);
+        srcDatasourceId.setValue("1");
         srcDatasourceId.setPlaceholder("${comparison_value}");
         srcDatasourceId.setOptionSourceType(OptionSourceType.DATASOURCE);
         srcDatasourceId.setInputType(InputType.DEFAULT);
@@ -190,7 +191,7 @@ public class RuleManager {
         srcTable.setType(FormType.INPUT);
         srcTable.setCanEdit(true);
         srcTable.setShow(true);
-        srcTable.setPlaceholder("${src_table}");
+        srcTable.setPlaceholder("Please enter source table name");
         srcTable.setOptionSourceType(OptionSourceType.DEFAULT);
         srcTable.setInputType(InputType.DEFAULT);
         srcTable.setValueType(ValueType.STRING);
@@ -201,19 +202,19 @@ public class RuleManager {
         srcFilter.setType(FormType.INPUT);
         srcFilter.setCanEdit(true);
         srcFilter.setShow(true);
-        srcFilter.setPlaceholder("${src_filter}");
+        srcFilter.setPlaceholder("Please enter filter expression");
         srcFilter.setOptionSourceType(OptionSourceType.DEFAULT);
         srcFilter.setInputType(InputType.DEFAULT);
-        srcFilter.setValueType(ValueType.STRING);
+        srcFilter.setValueType(ValueType.LIKE_SQL);
 
         RuleInputEntry srcField = new RuleInputEntry();
-        srcField.setTitle("源数据列");
+        srcField.setTitle("检测列");
         srcField.setField(SRC_FIELD);
         srcField.setType(FormType.INPUT);
         srcField.setCanEdit(true);
         srcField.setShow(true);
-        srcField.setValue(" ");
-        srcField.setPlaceholder("${src_field}");
+        srcField.setValue("");
+        srcField.setPlaceholder("Please enter column, only single column is supported");
         srcField.setOptionSourceType(OptionSourceType.DEFAULT);
         srcField.setInputType(InputType.DEFAULT);
         srcField.setValueType(ValueType.STRING);
@@ -262,9 +263,9 @@ public class RuleManager {
         threshold.setType(FormType.INPUT);
         threshold.setCanEdit(true);
         threshold.setShow(true);
+        threshold.setPlaceholder("Please enter threshold, number is needed");
         threshold.setInputType(InputType.CHECK);
-        threshold.setValueType(ValueType.STRING);
-        threshold.setPlaceholder("阈值");
+        threshold.setValueType(ValueType.NUMBER);
 
         RuleInputEntry afterFailure = new RuleInputEntry();
         afterFailure.setTitle("失败策略");
@@ -385,7 +386,7 @@ public class RuleManager {
 
     private static void testSingleTableCustomSql() throws Exception{
         RuleDefinition ruleDefinition = new RuleDefinition();
-        ruleDefinition.setRuleName("单表自定义SQL");
+        ruleDefinition.setRuleName("自定义SQL");
         ruleDefinition.setRuleType(RuleType.SINGLE_TABLE_CUSTOM_SQL);
 
         List<RuleInputEntry> defaultInputEntryList = new ArrayList<>();
@@ -397,7 +398,7 @@ public class RuleManager {
         srcConnectorType.setCanEdit(true);
         srcConnectorType.setShow(true);
         srcConnectorType.setValue("JDBC");
-        srcConnectorType.setPlaceholder("Please insert the src connector type");
+        srcConnectorType.setPlaceholder("Please select the source connector type");
         srcConnectorType.setOptionSourceType(OptionSourceType.DEFAULT);
         srcConnectorType.setOptions("[{\"label\":\"HIVE\",\"value\":\"HIVE\"},{\"label\":\"JDBC\",\"value\":\"JDBC\"}]");
         srcConnectorType.setInputType(InputType.DEFAULT);
@@ -409,7 +410,8 @@ public class RuleManager {
         srcDatasourceId.setType(FormType.CASCADER);
         srcDatasourceId.setCanEdit(true);
         srcDatasourceId.setShow(true);
-        srcDatasourceId.setPlaceholder("${comparison_value}");
+        srcDatasourceId.setValue("1");
+        srcDatasourceId.setPlaceholder("Please select source datasource");
         srcDatasourceId.setOptionSourceType(OptionSourceType.DATASOURCE);
         srcDatasourceId.setInputType(InputType.DEFAULT);
         srcDatasourceId.setValueType(ValueType.NUMBER);
@@ -420,7 +422,7 @@ public class RuleManager {
         srcTable.setType(FormType.INPUT);
         srcTable.setCanEdit(true);
         srcTable.setShow(true);
-        srcTable.setPlaceholder("${src_table}");
+        srcTable.setPlaceholder("Please enter source table name");
         srcTable.setOptionSourceType(OptionSourceType.DEFAULT);
         srcTable.setInputType(InputType.DEFAULT);
         srcTable.setValueType(ValueType.STRING);
@@ -431,7 +433,7 @@ public class RuleManager {
         statisticsName.setType(FormType.INPUT);
         statisticsName.setCanEdit(true);
         statisticsName.setShow(true);
-        statisticsName.setPlaceholder("${statistics_name}");
+        statisticsName.setPlaceholder("Please enter statistics name, the alias in statistics execute sql");
         statisticsName.setOptionSourceType(OptionSourceType.DEFAULT);
         statisticsName.setInputType(InputType.DEFAULT);
         statisticsName.setValueType(ValueType.STRING);
@@ -439,12 +441,12 @@ public class RuleManager {
         RuleInputEntry statisticsExecuteSql = new RuleInputEntry();
         statisticsExecuteSql.setTitle("统计值计算SQL");
         statisticsExecuteSql.setField("statistics_execute_sql");
-        statisticsExecuteSql.setType(FormType.INPUT);
+        statisticsExecuteSql.setType(FormType.TEXTAREA);
         statisticsExecuteSql.setCanEdit(true);
         statisticsExecuteSql.setShow(true);
-        statisticsExecuteSql.setPlaceholder("${statistics_execute_sql}");
+        statisticsExecuteSql.setPlaceholder("Please enter the statistics execute sql");
         statisticsExecuteSql.setOptionSourceType(OptionSourceType.DEFAULT);
-        statisticsExecuteSql.setValueType(ValueType.STRING);
+        statisticsExecuteSql.setValueType(ValueType.LIKE_SQL);
 
         RuleInputEntry srcFilter = new RuleInputEntry();
         srcFilter.setTitle("源表过滤条件");
@@ -452,10 +454,10 @@ public class RuleManager {
         srcFilter.setType(FormType.INPUT);
         srcFilter.setCanEdit(true);
         srcFilter.setShow(true);
-        srcFilter.setPlaceholder("${src_filter}");
+        srcFilter.setPlaceholder("Please enter source filter expression");
         srcFilter.setOptionSourceType(OptionSourceType.DEFAULT);
         srcFilter.setInputType(InputType.DEFAULT);
-        srcFilter.setValueType(ValueType.STRING);
+        srcFilter.setValueType(ValueType.LIKE_SQL);
 
         RuleInputEntry checkType = new RuleInputEntry();
         checkType.setTitle("检测方式");
@@ -489,9 +491,9 @@ public class RuleManager {
         threshold.setType(FormType.INPUT);
         threshold.setCanEdit(true);
         threshold.setShow(true);
+        threshold.setPlaceholder("Please enter threshold value, number is needed");
         threshold.setInputType(InputType.CHECK);
-        threshold.setValueType(ValueType.STRING);
-        threshold.setPlaceholder("阈值");
+        threshold.setValueType(ValueType.NUMBER);
 
         RuleInputEntry afterFailure = new RuleInputEntry();
         afterFailure.setTitle("失败策略");
@@ -510,7 +512,6 @@ public class RuleManager {
         defaultInputEntryList.add(operator);
         defaultInputEntryList.add(threshold);
         defaultInputEntryList.add(afterFailure);
-
         defaultInputEntryList.add(srcConnectorType);
         defaultInputEntryList.add(srcDatasourceId);
         defaultInputEntryList.add(srcTable);
@@ -521,7 +522,6 @@ public class RuleManager {
 
         List<ExecuteSqlDefinition> statisticsExecuteSqlList = new ArrayList<>();
         ruleDefinition.setStatisticsExecuteSqlList(statisticsExecuteSqlList);
-
 
         ComparisonParameter comparisonParameter = new ComparisonParameter();
 
@@ -541,7 +541,7 @@ public class RuleManager {
         comparisonTitle.setCanEdit(false);
         comparisonTitle.setShow(true);
         comparisonTitle.setValue("表总行数");
-        comparisonTitle.setPlaceholder("${comparison_title}");
+        comparisonTitle.setPlaceholder("Please enter comparison title");
         comparisonTitle.setInputType(InputType.COMPARISON);
         comparisonTitle.setValueType(ValueType.STRING);
 
@@ -551,7 +551,7 @@ public class RuleManager {
         comparisonValue.setType(FormType.INPUT);
         comparisonValue.setCanEdit(false);
         comparisonValue.setShow(false);
-        comparisonValue.setPlaceholder("${comparison_value}");
+//        comparisonValue.setPlaceholder("${comparison_value}");
         comparisonValue.setInputType(InputType.COMPARISON);
         comparisonValue.setValueType(ValueType.NUMBER);
 
@@ -562,7 +562,7 @@ public class RuleManager {
         comparisonName.setCanEdit(false);
         comparisonName.setShow(false);
         comparisonName.setValue("total_count.total");
-        comparisonName.setPlaceholder("${comparison_name}");
+//        comparisonName.setPlaceholder("${comparison_name}");
         comparisonName.setInputType(InputType.COMPARISON);
         comparisonName.setValueType(ValueType.STRING);
 
@@ -619,7 +619,7 @@ public class RuleManager {
         srcConnectorType.setCanEdit(true);
         srcConnectorType.setShow(true);
         srcConnectorType.setValue("JDBC");
-        srcConnectorType.setPlaceholder("${src_connector_type}");
+        srcConnectorType.setPlaceholder("Please select source connector type");
         srcConnectorType.setOptionSourceType(OptionSourceType.DEFAULT);
         srcConnectorType.setOptions("[{\"label\":\"HIVE\",\"value\":\"HIVE\"},{\"label\":\"JDBC\",\"value\":\"JDBC\"}]");
         srcConnectorType.setInputType(InputType.DEFAULT);
@@ -631,9 +631,10 @@ public class RuleManager {
         srcDatasourceId.setType(FormType.CASCADER);
         srcDatasourceId.setCanEdit(true);
         srcDatasourceId.setShow(true);
-        srcDatasourceId.setPlaceholder("${comparison_value}");
+        srcDatasourceId.setValue("1");
+        srcDatasourceId.setPlaceholder("Please select source datasource");
         srcDatasourceId.setOptionSourceType(OptionSourceType.DATASOURCE);
-        srcConnectorType.setValueType(ValueType.NUMBER);
+        srcDatasourceId.setValueType(ValueType.NUMBER);
 
         RuleInputEntry srcTable = new RuleInputEntry();
         srcTable.setTitle("源数据表");
@@ -641,7 +642,7 @@ public class RuleManager {
         srcTable.setType(FormType.INPUT);
         srcTable.setCanEdit(true);
         srcTable.setShow(true);
-        srcTable.setPlaceholder("${src_table}");
+        srcTable.setPlaceholder("Please enter source table");
         srcTable.setOptionSourceType(OptionSourceType.DEFAULT);
         srcTable.setValueType(ValueType.STRING);
 
@@ -651,19 +652,19 @@ public class RuleManager {
         statisticsName.setType(FormType.INPUT);
         statisticsName.setCanEdit(true);
         statisticsName.setShow(true);
-        statisticsName.setPlaceholder("统计指标计算SQL的列别名");
+        statisticsName.setPlaceholder("Please enter statistics name, the alias in statistics execute sql");
         statisticsName.setOptionSourceType(OptionSourceType.DEFAULT);
         statisticsName.setValueType(ValueType.STRING);
 
         RuleInputEntry statisticsExecuteSql = new RuleInputEntry();
         statisticsExecuteSql.setTitle("统计值计算SQL");
         statisticsExecuteSql.setField("statistics_execute_sql");
-        statisticsExecuteSql.setType(FormType.INPUT);
+        statisticsExecuteSql.setType(FormType.TEXTAREA);
         statisticsExecuteSql.setCanEdit(true);
         statisticsExecuteSql.setShow(true);
-        statisticsExecuteSql.setPlaceholder("${statistics_execute_sql}");
+        statisticsExecuteSql.setPlaceholder("Please enter statistics execute sql");
         statisticsExecuteSql.setOptionSourceType(OptionSourceType.DEFAULT);
-        statisticsName.setValueType(ValueType.STRING);
+        statisticsName.setValueType(ValueType.LIKE_SQL);
 
         RuleInputEntry targetConnectorType = new RuleInputEntry();
         targetConnectorType.setTitle("目标数据类型");
@@ -672,7 +673,7 @@ public class RuleManager {
         targetConnectorType.setCanEdit(true);
         targetConnectorType.setShow(true);
         targetConnectorType.setValue("JDBC");
-        targetConnectorType.setPlaceholder("${target_connector_type}");
+        targetConnectorType.setPlaceholder("Please select target connector type");
         targetConnectorType.setOptionSourceType(OptionSourceType.DEFAULT);
         targetConnectorType.setOptions("[{\"label\":\"HIVE\",\"value\":\"HIVE\"},{\"label\":\"JDBC\",\"value\":\"JDBC\"}]");
 
@@ -682,7 +683,8 @@ public class RuleManager {
         targetDatasourceId.setType(FormType.CASCADER);
         targetDatasourceId.setCanEdit(true);
         targetDatasourceId.setShow(true);
-        targetDatasourceId.setPlaceholder("${target_datasource_id}");
+        targetDatasourceId.setValue("1");
+        targetDatasourceId.setPlaceholder("Please select target datasource");
         targetDatasourceId.setOptionSourceType(OptionSourceType.DATASOURCE);
 
         RuleInputEntry targetTable = new RuleInputEntry();
@@ -691,8 +693,9 @@ public class RuleManager {
         targetTable.setType(FormType.INPUT);
         targetTable.setCanEdit(true);
         targetTable.setShow(true);
-        targetTable.setPlaceholder("${target_table}");
+        targetTable.setPlaceholder("Please enter target table");
         targetTable.setOptionSourceType(OptionSourceType.DEFAULT);
+        targetTable.setValueType(ValueType.STRING);
 
         RuleInputEntry comparisonName = new RuleInputEntry();
         comparisonName.setTitle("比对值名");
@@ -700,17 +703,19 @@ public class RuleManager {
         comparisonName.setType(FormType.INPUT);
         comparisonName.setCanEdit(true);
         comparisonName.setShow(true);
-        comparisonName.setPlaceholder("比对值计算SQL中的列别名");
+        comparisonName.setPlaceholder("Please enter comparison name, the alias in comparison execute sql");
         comparisonName.setOptionSourceType(OptionSourceType.DEFAULT);
+        comparisonName.setValueType(ValueType.STRING);
 
         RuleInputEntry comparisonExecuteSql = new RuleInputEntry();
         comparisonExecuteSql.setTitle("比对值计算SQL");
         comparisonExecuteSql.setField("comparison_execute_sql");
-        comparisonExecuteSql.setType(FormType.INPUT);
+        comparisonExecuteSql.setType(FormType.TEXTAREA);
         comparisonExecuteSql.setCanEdit(true);
         comparisonExecuteSql.setShow(true);
-        comparisonExecuteSql.setPlaceholder("${comparison_execute_sql}");
+        comparisonExecuteSql.setPlaceholder("Please enter comparison execute sql");
         comparisonExecuteSql.setOptionSourceType(OptionSourceType.DEFAULT);
+        comparisonExecuteSql.setValueType(ValueType.LIKE_SQL);
 
         RuleInputEntry checkType = new RuleInputEntry();
         checkType.setTitle("检测方式");
@@ -745,8 +750,8 @@ public class RuleManager {
         threshold.setCanEdit(true);
         threshold.setShow(true);
         threshold.setInputType(InputType.CHECK);
-        threshold.setValueType(ValueType.STRING);
-        threshold.setPlaceholder("阈值");
+        threshold.setValueType(ValueType.NUMBER);
+        threshold.setPlaceholder("Please enter threshold, number is needed");
 
         RuleInputEntry afterFailure = new RuleInputEntry();
         afterFailure.setTitle("失败策略");
@@ -837,7 +842,7 @@ public class RuleManager {
         srcConnectorType.setCanEdit(true);
         srcConnectorType.setShow(true);
         srcConnectorType.setValue("JDBC");
-        srcConnectorType.setPlaceholder("请选择数据源类型");
+        srcConnectorType.setPlaceholder("Please select source connector type");
         srcConnectorType.setOptionSourceType(OptionSourceType.DEFAULT);
         srcConnectorType.setOptions("[{\"label\":\"HIVE\",\"value\":\"HIVE\"},{\"label\":\"JDBC\",\"value\":\"JDBC\"}]");
         srcConnectorType.setInputType(InputType.DEFAULT);
@@ -849,7 +854,8 @@ public class RuleManager {
         srcDatasourceId.setType(FormType.CASCADER);
         srcDatasourceId.setCanEdit(true);
         srcDatasourceId.setShow(true);
-        srcDatasourceId.setPlaceholder("${comparison_value}");
+        srcDatasourceId.setValue("1");
+        srcDatasourceId.setPlaceholder("Please select source datasource");
         srcDatasourceId.setOptionSourceType(OptionSourceType.DATASOURCE);
         srcDatasourceId.setInputType(InputType.DEFAULT);
         srcDatasourceId.setValueType(ValueType.NUMBER);
@@ -860,7 +866,7 @@ public class RuleManager {
         srcTable.setType(FormType.INPUT);
         srcTable.setCanEdit(true);
         srcTable.setShow(true);
-        srcTable.setPlaceholder("${src_table}");
+        srcTable.setPlaceholder("Please enter source table");
         srcTable.setOptionSourceType(OptionSourceType.DEFAULT);
         srcTable.setInputType(InputType.DEFAULT);
         srcTable.setValueType(ValueType.STRING);
@@ -871,10 +877,10 @@ public class RuleManager {
         srcFilter.setType(FormType.INPUT);
         srcFilter.setCanEdit(true);
         srcFilter.setShow(true);
-        srcFilter.setPlaceholder("${src_filter}");
+        srcFilter.setPlaceholder("Please enter source filter expression");
         srcFilter.setOptionSourceType(OptionSourceType.DEFAULT);
         srcFilter.setInputType(InputType.DEFAULT);
-        srcFilter.setValueType(ValueType.STRING);
+        srcFilter.setValueType(ValueType.LIKE_SQL);
 
         RuleInputEntry targetConnectorType = new RuleInputEntry();
         targetConnectorType.setTitle("目标数据类型");
@@ -883,7 +889,7 @@ public class RuleManager {
         targetConnectorType.setCanEdit(true);
         targetConnectorType.setShow(true);
         targetConnectorType.setValue("JDBC");
-        targetConnectorType.setPlaceholder("${target_connector_type}");
+        targetConnectorType.setPlaceholder("Please select target connector type");
         targetConnectorType.setOptionSourceType(OptionSourceType.DEFAULT);
         targetConnectorType.setOptions("[{\"label\":\"HIVE\",\"value\":\"HIVE\"},{\"label\":\"JDBC\",\"value\":\"JDBC\"}]");
         targetConnectorType.setInputType(InputType.DEFAULT);
@@ -895,7 +901,8 @@ public class RuleManager {
         targetDatasourceId.setType(FormType.CASCADER);
         targetDatasourceId.setCanEdit(true);
         targetDatasourceId.setShow(true);
-        targetDatasourceId.setPlaceholder("${target_datasource_id}");
+        targetDatasourceId.setValue("1");
+        targetDatasourceId.setPlaceholder("Please select target datasource");
         targetDatasourceId.setOptionSourceType(OptionSourceType.DATASOURCE);
         targetDatasourceId.setInputType(InputType.DEFAULT);
         targetDatasourceId.setValueType(ValueType.NUMBER);
@@ -906,10 +913,10 @@ public class RuleManager {
         targetTable.setType(FormType.INPUT);
         targetTable.setCanEdit(true);
         targetTable.setShow(true);
-        targetTable.setPlaceholder("${target_table}");
+        targetTable.setPlaceholder("Please enter target table");
         targetTable.setOptionSourceType(OptionSourceType.DEFAULT);
         targetTable.setInputType(InputType.DEFAULT);
-        targetTable.setValueType(ValueType.NUMBER);
+        targetTable.setValueType(ValueType.STRING);
 
         RuleInputEntry targetFilter = new RuleInputEntry();
         targetFilter.setTitle("目标表过滤条件");
@@ -917,10 +924,10 @@ public class RuleManager {
         targetFilter.setType(FormType.INPUT);
         targetFilter.setCanEdit(true);
         targetFilter.setShow(true);
-        targetFilter.setPlaceholder("${target_filter}");
+        targetFilter.setPlaceholder("Please enter target filter expression");
         targetFilter.setOptionSourceType(OptionSourceType.DEFAULT);
         targetFilter.setInputType(InputType.DEFAULT);
-        targetFilter.setValueType(ValueType.STRING);
+        targetFilter.setValueType(ValueType.LIKE_SQL);
 
         RuleInputEntry mappingColumns = new RuleInputEntry();
         mappingColumns.setTitle("检查列");
@@ -931,7 +938,7 @@ public class RuleManager {
         mappingColumns.setPlaceholder("${mapping_columns}");
         mappingColumns.setOptionSourceType(OptionSourceType.DEFAULT);
         mappingColumns.setInputType(InputType.DEFAULT);
-        mappingColumns.setValueType(ValueType.NUMBER);
+        mappingColumns.setValueType(ValueType.LIST);
 
         RuleInputEntry statisticsName = new RuleInputEntry();
         statisticsName.setTitle("统计值");
@@ -1044,8 +1051,8 @@ public class RuleManager {
         threshold.setCanEdit(true);
         threshold.setShow(true);
         threshold.setInputType(InputType.CHECK);
-        threshold.setValueType(ValueType.STRING);
-        threshold.setPlaceholder("阈值");
+        threshold.setValueType(ValueType.NUMBER);
+        threshold.setPlaceholder("Please enter threshold, number is needed");
 
         RuleInputEntry afterFailure = new RuleInputEntry();
         afterFailure.setTitle("失败策略");
@@ -1073,8 +1080,6 @@ public class RuleManager {
 
         ruleDefinition.setComparisonParameter(comparisonParameter);
         ruleDefinition.setMidExecuteSqlList(midExecuteSqlList);
-
-//        System.out.println(JSONUtils.toJsonString(ruleDefinition));
 
         Map<String,String> inputParameterValue = new HashMap<>();
         inputParameterValue.put("src_connector_type","JDBC");

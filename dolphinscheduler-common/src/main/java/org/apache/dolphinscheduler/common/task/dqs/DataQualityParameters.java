@@ -17,19 +17,30 @@
 package org.apache.dolphinscheduler.common.task.dqs;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.dolphinscheduler.common.enums.FormType;
+import org.apache.dolphinscheduler.common.enums.ValueType;
 import org.apache.dolphinscheduler.common.process.ResourceInfo;
 import org.apache.dolphinscheduler.common.task.AbstractParameters;
+import org.apache.dolphinscheduler.common.task.dqs.rule.ComparisonParameter;
+import org.apache.dolphinscheduler.common.task.dqs.rule.RuleDefinition;
+import org.apache.dolphinscheduler.common.task.dqs.rule.RuleInputEntry;
 import org.apache.dolphinscheduler.common.task.spark.SparkParameters;
 import org.apache.dolphinscheduler.common.utils.JSONUtils;
 import org.apache.dolphinscheduler.common.utils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * DataQualityParameters
  */
 public class DataQualityParameters extends AbstractParameters {
+
+    private static  final Logger logger = LoggerFactory.getLogger(DataQualityParameters.class);
 
     private int ruleId;
     private String ruleJson;
@@ -68,11 +79,56 @@ public class DataQualityParameters extends AbstractParameters {
     @Override
     public boolean checkParameters() {
 
-        return  (ruleId != 0
-                && StringUtils.isNotEmpty(ruleJson)
-                && MapUtils.isNotEmpty(ruleInputParameter)
-                && sparkParameters != null
-                );
+        if(ruleId == 0){
+            return false;
+        }
+
+        if(StringUtils.isEmpty(ruleJson)){
+            return false;
+        }
+
+        RuleDefinition ruleDefinition = JSONUtils.parseObject(ruleJson,RuleDefinition.class);
+        if(ruleDefinition == null){
+            return false;
+        }
+
+        if(MapUtils.isEmpty(ruleInputParameter)){
+            return false;
+        }
+
+        List<RuleInputEntry> defaultInputEntryList  = ruleDefinition.getRuleInputEntryList();
+        ComparisonParameter comparisonParameter = ruleDefinition.getComparisonParameter();
+        defaultInputEntryList.addAll(comparisonParameter.getInputEntryList());
+
+        for(RuleInputEntry ruleInputEntry: defaultInputEntryList){
+            System.out.println(JSONUtils.toJsonString(ruleInputEntry));
+            if(ruleInputEntry.getCanEdit() && FormType.INPUT == ruleInputEntry.getType()){
+                System.out.println("1: "+JSONUtils.toJsonString(ruleInputEntry));
+                String value = ruleInputParameter.get(ruleInputEntry.getField());
+                if(StringUtils.isNotEmpty(value)){
+                    System.out.println("2: "+value);
+                    ValueType valueType = ruleInputEntry.getValueType();
+                    switch (valueType){
+                        case STRING:
+                            if(value.contains(",")){
+                                logger.error(ruleInputEntry.getField() +" can not contains , ");
+                                return false;
+                            }
+                            break;
+                        case NUMBER:
+                            if(!isNum(value)){
+                                logger.error(ruleInputEntry.getField() +" should be a num ");
+                                return false;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
+        return sparkParameters != null;
     }
 
     @Override
@@ -88,4 +144,9 @@ public class DataQualityParameters extends AbstractParameters {
         this.sparkParameters = sparkParameters;
     }
 
+    private boolean isNum(String str){
+        Pattern pattern = Pattern.compile("[0-9]*");
+        Matcher isNum = pattern.matcher(str);
+        return isNum.matches();
+    }
 }

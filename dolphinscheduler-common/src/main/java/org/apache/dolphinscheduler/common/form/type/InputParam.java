@@ -18,6 +18,7 @@
 package org.apache.dolphinscheduler.common.form.type;
 
 import org.apache.dolphinscheduler.common.enums.FormType;
+import org.apache.dolphinscheduler.common.enums.PropsType;
 import org.apache.dolphinscheduler.common.form.props.InputParamsProps;
 import org.apache.dolphinscheduler.common.form.PluginParams;
 import org.apache.dolphinscheduler.common.form.Validate;
@@ -93,6 +94,25 @@ public class InputParam extends PluginParams {
             ((InputParamsProps)this.props).setSize(size);
             return this;
         }
+
+        public InputParam.Builder setType(PropsType type){
+            if (this.props == null) {
+                this.setProps(new InputParamsProps());
+            }
+
+            ((InputParamsProps)this.props).setPropsType(type);
+            return this;
+        }
+
+        public InputParam.Builder setRows(int rows){
+            if (this.props == null) {
+                this.setProps(new InputParamsProps());
+            }
+
+            ((InputParamsProps)this.props).setRows(rows);
+            return this;
+        }
+
 
         @Override
         public InputParam build() {
