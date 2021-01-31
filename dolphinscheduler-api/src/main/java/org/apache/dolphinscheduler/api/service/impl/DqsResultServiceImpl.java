@@ -63,7 +63,7 @@ public class DqsResultServiceImpl extends BaseService  implements DqsResultServi
     }
 
     @Override
-    public Map<String, Object> queryDefineListPaging(User loginUser,
+    public Map<String, Object> queryResultListPaging(User loginUser,
                                                      String searchVal,
                                                      Integer state,
                                                      Integer ruleType,

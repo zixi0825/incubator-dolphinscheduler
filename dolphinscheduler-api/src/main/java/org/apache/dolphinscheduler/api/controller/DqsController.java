@@ -156,20 +156,23 @@ public class DqsController extends BaseController {
             @ApiImplicitParam(name = "userId", value = "USER_ID", required = false, dataType = "Int", example = "100"),
             @ApiImplicitParam(name = "pageSize", value = "PAGE_SIZE", required = true, dataType = "Int", example = "100")
     })
-    @GetMapping(value = "/rulePage")
+    @GetMapping(value = "/rule/page")
     @ResponseStatus(HttpStatus.OK)
     @ApiException(QUERY_PROCESS_DEFINITION_LIST_PAGING_ERROR)
     public Result queryRuleListPaging(@ApiIgnore @RequestAttribute(value = Constants.SESSION_USER) User loginUser,
-                                                   @RequestParam("pageNo") Integer pageNo,
-                                                   @RequestParam(value = "searchVal", required = false) String searchVal,
-                                                   @RequestParam("pageSize") Integer pageSize) {
+                                                 @RequestParam(value = "searchVal", required = false) String searchVal,
+                                                 @RequestParam(value = "ruleType", required = false) Integer ruleType,
+                                                 @RequestParam(value = "startDate", required = false) String startTime,
+                                                 @RequestParam(value = "endDate", required = false) String endTime,
+                                                 @RequestParam("pageNo") Integer pageNo,
+                                                 @RequestParam("pageSize") Integer pageSize) {
         logger.info("query rule list paging, login user:{}", loginUser.getUserName());
         Map<String, Object> result = checkPageParams(pageNo, pageSize);
         if (result.get(Constants.STATUS) != Status.SUCCESS) {
             return returnDataListPaging(result);
         }
         searchVal = ParameterUtils.handleEscapes(searchVal);
-        result = dqsRuleService.queryDqsRuleListPage(loginUser, searchVal, pageNo, pageSize);
+        result = dqsRuleService.queryRuleListPaging(loginUser, searchVal, ruleType, startTime, endTime, pageNo, pageSize);
         return returnDataListPaging(result);
     }
 
@@ -219,7 +222,7 @@ public class DqsController extends BaseController {
             return returnDataListPaging(result);
         }
         searchVal = ParameterUtils.handleEscapes(searchVal);
-        result = dqsResultService.queryDefineListPaging(loginUser, searchVal, state, ruleType, startTime, endTime, pageNo, pageSize);
+        result = dqsResultService.queryResultListPaging(loginUser, searchVal, state, ruleType, startTime, endTime, pageNo, pageSize);
         return returnDataListPaging(result);
     }
 }

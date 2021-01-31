@@ -100,10 +100,11 @@ public class DataQualityTask extends AbstractYarnTask {
         String now = df.format(time);
 
         inputParameter.put("rule_type",ruleDefinition.getRuleType().getCode()+"");
-        inputParameter.put("rule_name",ruleDefinition.getRuleName()+"");
+        inputParameter.put("rule_name","'"+ruleDefinition.getRuleName()+"'");
         inputParameter.put("create_time","'"+now+"'");
         inputParameter.put("update_time","'"+now+"'");
-        inputParameter.put("process_defined_id",taskExecutionContext.getTaskAppId().split("_")[0]);
+        inputParameter.put("process_definition_id",taskExecutionContext.getProcessDefineId()+"");
+        inputParameter.put("process_instance_id",taskExecutionContext.getProcessInstanceId()+"");
         inputParameter.put("task_instance_id",taskExecutionContext.getTaskInstanceId()+"");
 
         RuleManager ruleManager = new RuleManager(

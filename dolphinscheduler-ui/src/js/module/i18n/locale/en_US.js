@@ -360,6 +360,8 @@ export default {
   Security: 'Security',
   DataQuality: 'DataQuality',
   'Dqs Result List':'Dqs Result List',
+  'Dqs Rule List':'Dqs Rule List',
+  'Dqs Rule Json':'Rule Definition',
   Logout: 'Logout',
   'No data': 'No data',
   'Uploading...': 'Uploading...',

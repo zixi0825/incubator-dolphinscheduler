@@ -18,4 +18,24 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="org.apache.dolphinscheduler.dao.mapper.DqsRuleMapper">
+    <select id="queryRuleListPaging" resultType="org.apache.dolphinscheduler.dao.entity.DqsRule">
+        SELECT a.id, a.name, a.type, a.rule_json, b.user_name, a.create_time, a.update_time
+        FROM t_ds_dqs_rule a
+        left join t_ds_user b on b.id = a.user_id
+        <where>
+            <if test=" searchVal != null and searchVal != ''">
+                and a.name like concat('%', #{searchVal}, '%')
+            </if>
+            <if test="startTime != null ">
+                and a.update_time > #{startTime} and a.update_time <![CDATA[ <=]]> #{endTime}
+            </if>
+            <if test=" userId != 1">
+                and a.user_id = #{userId}
+            </if>
+            <if test=" ruleType != -1">
+                and a.rule_type = #{ruleType}
+            </if>
+        </where>
+        order by a.update_time desc
+    </select>
 </mapper>

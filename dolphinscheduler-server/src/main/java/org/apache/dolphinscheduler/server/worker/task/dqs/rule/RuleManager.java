@@ -43,7 +43,8 @@ public class RuleManager {
     public static final String  DEFAULT_COMPARISON_WRITER_SQL =
             "SELECT ${rule_type} as rule_type," +
             "${rule_name} as rule_name,"+
-            "${process_defined_id} as process_defined_id," +
+            "${process_definition_id} as process_definition_id," +
+            "${process_instance_id} as process_instance_id," +
             "${task_instance_id} as task_instance_id," +
             "${statistics_name} AS statistics_value, " +
             "${comparison_name} AS comparison_value," +
@@ -58,7 +59,8 @@ public class RuleManager {
     public static final String MULTI_TABLE_COMPARISON_WRITER_SQL =
             "SELECT ${rule_type} as rule_type," +
             "${rule_name} as rule_name,"+
-            "${process_defined_id} as process_defined_id," +
+            "${process_definition_id} as process_definition_id," +
+            "${process_instance_id} as process_instance_id," +
             "${task_instance_id} as task_instance_id," +
             "${statistics_name} AS statistics_value, " +
             "${comparison_name} AS comparison_value," +
@@ -75,7 +77,8 @@ public class RuleManager {
     public static final String SINGLE_TABLE_CUSTOM_SQL_WRITER_SQL =
             "SELECT ${rule_type} as rule_type," +
             "${rule_name} as rule_name,"+
-            "${process_defined_id} as process_defined_id," +
+            "${process_definition_id} as process_definition_id," +
+            "${process_instance_id} as process_instance_id," +
             "${task_instance_id} as task_instance_id," +
             "${statistics_name} AS statistics_value, " +
             "${comparison_name} AS comparison_value," +
@@ -361,7 +364,7 @@ public class RuleManager {
         inputParameterValue.put("src_field","id");
 
         inputParameterValue.put("rule_type","1");
-        inputParameterValue.put("process_defined_id","1");
+        inputParameterValue.put("process_definition_id","1");
         inputParameterValue.put("task_instance_id","1");
         inputParameterValue.put("check_type","1");
         inputParameterValue.put("threshold","1");
@@ -582,7 +585,7 @@ public class RuleManager {
         inputParameterValue.put("src_field","id");
 
         inputParameterValue.put("rule_type","1");
-        inputParameterValue.put("process_defined_id","1");
+        inputParameterValue.put("process_definition_id","1");
         inputParameterValue.put("task_instance_id","1");
         inputParameterValue.put("check_type","1");
         inputParameterValue.put("threshold","1");
@@ -799,7 +802,7 @@ public class RuleManager {
         inputParameterValue.put("comparison_execute_sql","select count(1) as count2 from default.test1_1");
 
         inputParameterValue.put("rule_type","1");
-        inputParameterValue.put("process_defined_id","1");
+        inputParameterValue.put("process_definition_id","1");
         inputParameterValue.put("task_instance_id","1");
         inputParameterValue.put("check_type","1");
         inputParameterValue.put("threshold","1");
@@ -1094,7 +1097,7 @@ public class RuleManager {
         inputParameterValue.put("mapping_columns","id,company");
 
         inputParameterValue.put("rule_type","1");
-        inputParameterValue.put("process_defined_id","1");
+        inputParameterValue.put("process_definition_id","1");
         inputParameterValue.put("task_instance_id","1");
         inputParameterValue.put("check_type","1");
         inputParameterValue.put("threshold","111");

@@ -45,4 +45,11 @@ public interface DqsRuleService {
                                          Integer pageSize);
 
     Map<String, Object> queryAllRuleList();
+
+    Map<String, Object> queryRuleListPaging(User loginUser,
+                                            String searchVal,
+                                            Integer ruleType,
+                                            String startTime,
+                                            String endTime,
+                                            Integer pageNo, Integer pageSize);
 }

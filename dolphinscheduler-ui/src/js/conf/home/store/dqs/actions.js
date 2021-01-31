@@ -30,5 +30,18 @@ export default {
         reject(e)
       })
     })
+  },
+
+  /**
+   * get queue list pages
+   */
+  getDqsRuleListPage ({ state }, payload) {
+    return new Promise((resolve, reject) => {
+      io.get('dqs/rule/page', payload, res => {
+        resolve(res.data)
+      }).catch(e => {
+        reject(e)
+      })
+    })
   }
 }

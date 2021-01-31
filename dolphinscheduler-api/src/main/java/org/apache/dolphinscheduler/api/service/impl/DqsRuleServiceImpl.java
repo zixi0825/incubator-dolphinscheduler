@@ -43,6 +43,7 @@ import org.apache.dolphinscheduler.common.task.dqs.rule.ComparisonParameter;
 import org.apache.dolphinscheduler.common.task.dqs.rule.RuleDefinition;
 import org.apache.dolphinscheduler.common.task.dqs.rule.RuleInputEntry;
 import org.apache.dolphinscheduler.common.utils.CollectionUtils;
+import org.apache.dolphinscheduler.common.utils.DateUtils;
 import org.apache.dolphinscheduler.common.utils.JSONUtils;
 import org.apache.dolphinscheduler.common.utils.StringUtils;
 import org.apache.dolphinscheduler.dao.entity.DataSource;
@@ -53,6 +54,8 @@ import org.apache.dolphinscheduler.dao.mapper.DqsRuleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.*;
+
+import static org.apache.dolphinscheduler.common.Constants.DATA_LIST;
 
 /**
  * DqsRuleServiceImpl
@@ -189,6 +192,47 @@ public class DqsRuleServiceImpl extends BaseService  implements DqsRuleService {
         result.put(Constants.DATA_LIST, ruleList);
         putMsg(result, Status.SUCCESS);
 
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> queryRuleListPaging(User loginUser, String searchVal, Integer ruleType, String startTime, String endTime, Integer pageNo, Integer pageSize) {
+        Map<String, Object> result = new HashMap<>();
+        
+        Date start = null;
+        Date end = null;
+        try {
+            if (StringUtils.isNotEmpty(startTime)) {
+                start = DateUtils.getScheduleDate(startTime);
+            }
+            if (StringUtils.isNotEmpty(endTime)) {
+                end = DateUtils.getScheduleDate(endTime);
+            }
+        } catch (Exception e) {
+            putMsg(result, Status.REQUEST_PARAMS_NOT_VALID_ERROR, "startTime,endTime");
+            return result;
+        }
+
+        Page<DqsRule> page = new Page<>(pageNo, pageSize);
+        PageInfo<DqsRule> pageInfo = new PageInfo<>(pageNo, pageSize);
+
+        if(ruleType == null){
+            ruleType = -1;
+        }
+
+        IPage<DqsRule> dqsRulePage =
+                dqsRuleMapper.queryRuleListPaging(
+                        page,
+                        searchVal,
+                        loginUser.getId(),
+                        ruleType,
+                        start,
+                        end);
+
+        pageInfo.setTotalCount((int) dqsRulePage.getTotal());
+        pageInfo.setLists(dqsRulePage.getRecords());
+        result.put(DATA_LIST, pageInfo);
+        putMsg(result, Status.SUCCESS);
         return result;
     }
 
@@ -353,4 +397,5 @@ public class DqsRuleServiceImpl extends BaseService  implements DqsRuleService {
 
         return result;
     }
+    
 }

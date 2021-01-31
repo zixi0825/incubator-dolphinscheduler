@@ -32,7 +32,7 @@ public interface DqsResultService {
 
     Map<String, Object> getByTaskInstanceId(int taskInstanceId);
 
-    Map<String, Object> queryDefineListPaging(User loginUser,
+    Map<String, Object> queryResultListPaging(User loginUser,
                                               String searchVal,
                                               Integer state,
                                               Integer ruleType,

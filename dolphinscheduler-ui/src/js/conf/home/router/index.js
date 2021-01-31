@@ -418,6 +418,14 @@ const router = new Router({
           meta: {
             title: `${i18n.$t('Dqs Result List')}`
           }
+        }, 
+        {
+          path: '/dqs/rule',
+          name: 'dqs-rule-list',
+          component: resolve => require(['../pages/dqs/pages/rule/index'], resolve),
+          meta: {
+            title: `${i18n.$t('Dqs Rule List')}`
+          }
         }
       ]
     },

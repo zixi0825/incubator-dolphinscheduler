@@ -46,6 +46,16 @@ public class DqsResult {
     @TableField(exist = false)
     private String  processDefinitionName;
     /**
+     * process_instance_id
+     */
+    @TableField(value = "process_instance_id")
+    private long processInstanceId;
+    /**
+     * process instance name
+     */
+    @TableField(exist = false)
+    private String  processInstanceName;
+    /**
      * task_instance_id
      */
     @TableField(value = "task_instance_id")
@@ -147,7 +157,21 @@ public class DqsResult {
         this.taskInstanceId = taskInstanceId;
     }
 
+    public long getProcessInstanceId() {
+        return processInstanceId;
+    }
 
+    public void setProcessInstanceId(long processInstanceId) {
+        this.processInstanceId = processInstanceId;
+    }
+
+    public String getProcessInstanceName() {
+        return processInstanceName;
+    }
+
+    public void setProcessInstanceName(String processInstanceName) {
+        this.processInstanceName = processInstanceName;
+    }
 
     public String getRuleName() {
         return ruleName;
@@ -332,6 +356,7 @@ public class DqsResult {
         return "DqsResult{" +
                 "id=" + id +
                 ", processDefinitionId=" + processDefinitionId +
+                ", processInstanceId=" + processInstanceId +
                 ", taskInstanceId='" + taskInstanceId + '\'' +
                 ", ruleType='" + ruleType + '\'' +
                 ", statisticsValue=" + statisticsValue +

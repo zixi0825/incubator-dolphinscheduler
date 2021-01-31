@@ -208,6 +208,15 @@ const menu = {
       disabled: true,
       icon: 'fa-recycle',
       children: []
+    },
+    {
+      name: `${i18n.$t('Dqs Rule List')}`,
+      id: 3,
+      path: 'dqs-rule-list',
+      isOpen: true,
+      disabled: true,
+      icon: 'el-icon-s-custom',
+      children: []
     }
   ],
   security: [

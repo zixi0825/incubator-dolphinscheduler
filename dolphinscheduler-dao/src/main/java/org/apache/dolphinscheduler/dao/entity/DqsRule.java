@@ -51,6 +51,11 @@ public class DqsRule {
     @TableField(value = "user_id")
     private int userId;
     /**
+     * user_name
+     */
+    @TableField(exist = false)
+    private String userName;
+    /**
      * create_time
      */
     @TableField(value = "create_time")
@@ -115,6 +120,14 @@ public class DqsRule {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     @Override
